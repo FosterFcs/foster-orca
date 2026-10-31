@@ -141,6 +141,17 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
 .pv{font-size:28px;font-weight:900;color:var(--navy)}
 .adm-res{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}.adm-res div{background:#f4f5f7;border-radius:10px;padding:8px;text-align:center;font-size:11px;color:var(--mute)}.adm-res b{display:block;font-size:16px;color:var(--ink)}
 .pg{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}.pg.pendente{border-color:#e0a800;background:#fffbea}.pg .btns{margin-top:6px}
+.eng{background:#fff;border-radius:16px;padding:16px;border:2px solid #1c1c1e;max-width:760px;margin:0 auto;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.eng-app{margin:18px 0 14px}.eng-h{display:flex;gap:10px;align-items:center}.eng-h small{display:block;color:var(--red);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+.eng-h b{display:block;font-size:16px;color:var(--ink)}.eng-h em{display:block;font-style:normal;font-size:12px;color:var(--mute)}
+.eng-logo{width:42px;height:42px;flex:none;background:#1c1c1e;color:#fff;font-weight:900;display:grid;place-items:center;clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%);border-bottom:3px solid var(--red)}
+.eng-p{font-size:14px;color:#4b5563;margin:10px 0}.eng-g{display:grid;grid-template-columns:1fr 1fr;gap:6px}@media(min-width:640px){.eng-g{grid-template-columns:repeat(4,1fr)}}
+.eng-g div{background:#f4f5f7;border-radius:10px;padding:8px 9px;line-height:1.25}.eng-g span{font-size:18px}.eng-g b{display:block;font-size:13px;margin-top:2px;color:var(--ink)}.eng-g small{font-size:11px;color:var(--mute)}
+.eng-b{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}.eng-b a{font-size:13px;color:var(--ink);font-weight:600}
+.eng-wa{background:var(--green);color:#fff!important;padding:10px 14px;border-radius:10px;text-decoration:none;flex:1;text-align:center;min-width:100%}.eng-a{display:block;margin-top:8px;color:var(--mute);font-size:11px}
+.eng-dica{background:#fffbea;border:1px solid #f0d36b;border-left:5px solid #e0a800;border-radius:12px;padding:12px;margin-bottom:10px;font-size:13.5px}.eng-dica p{margin:4px 0 8px;color:#4b5563}
+.eng-dica a{display:inline-block;background:var(--green);color:#fff;text-decoration:none;padding:9px 12px;border-radius:9px;font-weight:700}.eng-dica small{display:block;margin-top:6px;color:var(--mute);font-size:11px}
+.aviso{display:flex;gap:10px;align-items:center;background:#fff;border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:13px;border-left:5px solid var(--red);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.06)}.aviso.ok{border-left-color:var(--green);background:#eefaf2}
 .approve-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px;display:flex;gap:8px;box-shadow:0 -2px 10px rgba(0,0,0,.1)}
 .approve-bar button{flex:1;padding:15px}
 </style>
@@ -184,11 +195,11 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
 <div class="lp">
  <div class="lp-top"><div class="lp-brand"><div class="logo">FO</div><b>Foster Orça</b></div><button class="lp-entrar" onclick="entrar()">Entrar no app</button></div>
  <section class="lp-hero">
-  <span class="lp-badge">🎤 Lançamento · preço de fundador</span>
+  <span class="lp-badge">🎁 7 dias com tudo liberado · preço de fundador</span>
   <h1>Fale o serviço.<br><span>O orçamento fica pronto</span> em 1 minuto.</h1>
   <p>Pedreiro, pintor, eletricista, encanador, gesseiro ou qualquer profissional de obra: você descreve por voz e o Foster Orça monta o <b>croqui</b>, a <b>lista de material</b> e um <b>PDF profissional</b> para o cliente aprovar pelo WhatsApp.</p>
   <div class="lp-ctas"><button class="lp-btn" onclick="entrar()">Começar grátis</button><a class="lp-btn2" href="#lp-planos" onclick="irPara(event,'lp-planos')">Ver planos</a></div>
-  <small>Sem cartão · Funciona no navegador do celular · Nada para instalar</small>
+  <small>7 dias grátis com IA · Sem cartão · Funciona no navegador do celular</small>
   <div class="phone"><div class="ph-scr">
    <div class="ph-bar"></div>
    <div class="ph-mic">🎤 Ouvindo… 00:12</div>
@@ -251,8 +262,8 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
   <h2>Planos de lançamento</h2>
   <p class="lp-sub">Quem assina agora garante o <b>preço de fundador</b> enquanto mantiver a assinatura.</p>
   <div class="plans">
-   <div class="plan"><h4>Grátis</h4><div class="pr">R$ 0</div><small>para experimentar</small>
-    <ul><li>3 orçamentos por mês</li><li>Croqui e lista de material</li><li>PDF com selo Foster Orça</li><li>Tabela de preços padrão</li></ul>
+   <div class="plan"><h4>Grátis</h4><div class="pr">R$ 0</div><small>para sempre</small>
+    <ul><li><b>7 primeiros dias com tudo liberado</b>, inclusive a IA</li><li>Depois: 3 orçamentos por mês</li><li>Croqui e lista de material</li><li>PDF com selo Foster Orça</li><li>Tabela de preços padrão</li></ul>
     <button class="lp-btn2" onclick="entrar()">Começar grátis</button></div>
    <div class="plan"><h4>Profissional</h4><div class="pr"><s>R$ 29,90</s> R$ 19,90<span>/mês</span></div><small>preço de fundador</small>
     <ul><li><b>Orçamentos ilimitados</b></li><li>Orçamento por voz com IA</li><li>PDF só com a sua marca</li><li>Link de aprovação no WhatsApp</li><li>Seus serviços, materiais e profissões</li><li>Planilha e backup</li></ul>
@@ -270,15 +281,22 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
   <details class="faq"><summary>Funciona sem internet?</summary><p>Monta o orçamento sem internet, no modo offline. A IA por voz, o PDF e o envio pelo WhatsApp precisam de conexão.</p></details>
   <details class="faq"><summary>Os preços já vêm prontos?</summary><p>Vem uma tabela de exemplo. Coloque o que você cobra na sua região e cadastre seus próprios serviços e materiais.</p></details>
   <details class="faq"><summary>O cliente precisa baixar algo para aprovar?</summary><p>Não. Ele recebe um link no WhatsApp, vê o orçamento e toca em “Aprovar”.</p></details>
+  <details class="faq"><summary>Como funciona o teste grátis?</summary><p>Ao criar a conta você ganha 7 dias com tudo liberado: orçamentos ilimitados, IA por voz, PDF com a sua marca e link de aprovação. Depois continua grátis com 3 orçamentos por mês, ou você assina para manter tudo.</p></details>
   <details class="faq"><summary>Posso cancelar quando quiser?</summary><p>Sim, sem multa. No plano mensal você só não renova o próximo mês.</p></details>
  </section>
 
+ <section class="lp-sec lp-gray" style="padding-top:30px"><div class="eng">
+ <div class="eng-h"><div class="eng-logo">FE</div><div><small>Precisa de engenheiro?</small><b>Foster Engenharia &amp; Construção</b><em>Eng. Civil Wilson Foster · CREA-SP 5071894914</em></div></div>
+ <p class="eng-p">Quando a obra do seu cliente pede responsável técnico, você continua com o serviço. A gente cuida da parte de engenharia.</p>
+ <div class="eng-g"><div><span>📐</span><b>Projetos</b><small>Arquitetônico, estrutural e de reforma</small></div><div><span>📝</span><b>ART</b><small>Responsabilidade técnica para a obra do seu cliente</small></div><div><span>🏢</span><b>Reforma em condomínio</b><small>Plano de reforma e ART exigidos pela NBR 16280</small></div><div><span>🔍</span><b>Laudos e vistorias</b><small>Inspeção, patologias, trincas e infiltração</small></div><div><span>🏗️</span><b>Gestão de obras</b><small>Acompanhamento, cronograma e diário de obra</small></div><div><span>🧮</span><b>Cálculo estrutural</b><small>Vigas, lajes, pilares e reforço</small></div><div><span>📄</span><b>Regularização</b><small>Habite-se e documentação do imóvel</small></div><div><span>🤝</span><b>Parceria</b><small>Você executa, a engenharia assina</small></div></div>
+ <div class="eng-b"><a class="eng-wa" target="_blank" href="https://wa.me/5524992096103?text=Ol%C3%A1%20Wilson!%20Vim%20pelo%20Foster%20Or%C3%A7a%20e%20preciso%20de%20um%20engenheiro.">💬 Falar com o engenheiro</a><a target="_blank" href="https://engfoster.com.br">engfoster.com.br</a><a target="_blank" href="https://instagram.com/foster.engenharia">@foster.engenharia</a></div>
+ <small class="eng-a">Atendimento em São Paulo e região.</small></div></section>
  <section class="lp-final">
   <h2>Seu próximo orçamento pode ficar pronto em 1 minuto.</h2>
   <button class="lp-btn" onclick="entrar()">Começar grátis agora</button>
   <p>Dúvidas? <a href="https://wa.me/5524992096103?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Foster%20Or%C3%A7a">Fale no WhatsApp</a> · (24) 99209-6103</p>
  </section>
- <footer class="lp-foot">Foster Orça é um produto <b>Foster Tech Soluções</b> · Wilson Foster · comercial@fosterconstrucoes.com.br</footer>
+ <footer class="lp-foot">Projetos · ART · Laudos · Vistorias técnicas · Gestão de obras — <a href="https://engfoster.com.br" target="_blank" style="color:#fff">Foster Engenharia</a><br>Foster Orça é um produto <b>Foster Tech Soluções</b> · Wilson Foster · comercial@fosterconstrucoes.com.br</footer>
 </div>
 </div>
 
@@ -293,9 +311,16 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
     <div class="kpis" id="kpis"></div>
     <button class="cta" onclick="novoOrc()">🎤 Novo orçamento por voz</button>
   </div>
+  <div id="avisoPlano"></div>
   <div class="search">🔎<input id="busca" placeholder="Buscar cliente, endereço ou nº" oninput="renderLista()"></div>
   <div class="fchips" id="filtros"></div>
   <div id="listaOrc"></div>
+  <div class="eng eng-app">
+ <div class="eng-h"><div class="eng-logo">FE</div><div><small>Precisa de engenheiro?</small><b>Foster Engenharia &amp; Construção</b><em>Eng. Civil Wilson Foster · CREA-SP 5071894914</em></div></div>
+ <p class="eng-p">Quando a obra do seu cliente pede responsável técnico, você continua com o serviço. A gente cuida da parte de engenharia.</p>
+ <div class="eng-g"><div><span>📐</span><b>Projetos</b><small>Arquitetônico, estrutural e de reforma</small></div><div><span>📝</span><b>ART</b><small>Responsabilidade técnica para a obra do seu cliente</small></div><div><span>🏢</span><b>Reforma em condomínio</b><small>Plano de reforma e ART exigidos pela NBR 16280</small></div><div><span>🔍</span><b>Laudos e vistorias</b><small>Inspeção, patologias, trincas e infiltração</small></div><div><span>🏗️</span><b>Gestão de obras</b><small>Acompanhamento, cronograma e diário de obra</small></div><div><span>🧮</span><b>Cálculo estrutural</b><small>Vigas, lajes, pilares e reforço</small></div><div><span>📄</span><b>Regularização</b><small>Habite-se e documentação do imóvel</small></div><div><span>🤝</span><b>Parceria</b><small>Você executa, a engenharia assina</small></div></div>
+ <div class="eng-b"><a class="eng-wa" target="_blank" href="https://wa.me/5524992096103?text=Ol%C3%A1%20Wilson!%20Vim%20pelo%20Foster%20Or%C3%A7a%20e%20preciso%20de%20um%20engenheiro.">💬 Falar com o engenheiro</a><a target="_blank" href="https://engfoster.com.br">engfoster.com.br</a><a target="_blank" href="https://instagram.com/foster.engenharia">@foster.engenharia</a></div>
+ <small class="eng-a">Atendimento em São Paulo e região.</small></div>
 </section>
 
 <!-- EDITOR -->
@@ -377,6 +402,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
 <!-- PROPOSTA (pré-visualização) -->
 <section id="tab-prop" class="hide">
   <div class="btns" style="margin:0 0 10px"><button class="btn2" onclick="show('editor')">← Voltar</button><button class="btnA" onclick="gerarPDF()">📄 Baixar / compartilhar PDF</button><button class="btn2" onclick="marcar('apr')">Marcar aprovado</button></div>
+  <div id="engDica"></div>
   <div id="propBox" style="border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)"></div>
 </section>
 
@@ -411,6 +437,12 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
     <p class="hint">Abre no Excel ou no Google Planilhas: um orçamento por linha, com cliente, data, situação e valores.</p>
     <div class="btns"><button class="btn2" onclick="exportar()">💾 Salvar cópia de segurança</button><button class="btn2" onclick="document.getElementById('imp').click()">📂 Restaurar cópia</button><input type="file" id="imp" class="hide" accept=".json" onchange="importar(this)"></div>
     <p class="hint">A cópia de segurança (.json) não é para abrir e ler: guarde no Drive ou no WhatsApp e use “Restaurar cópia” para recuperar tudo ao trocar de celular.</p></div>
+  <div class="eng eng-app">
+ <div class="eng-h"><div class="eng-logo">FE</div><div><small>Precisa de engenheiro?</small><b>Foster Engenharia &amp; Construção</b><em>Eng. Civil Wilson Foster · CREA-SP 5071894914</em></div></div>
+ <p class="eng-p">Quando a obra do seu cliente pede responsável técnico, você continua com o serviço. A gente cuida da parte de engenharia.</p>
+ <div class="eng-g"><div><span>📐</span><b>Projetos</b><small>Arquitetônico, estrutural e de reforma</small></div><div><span>📝</span><b>ART</b><small>Responsabilidade técnica para a obra do seu cliente</small></div><div><span>🏢</span><b>Reforma em condomínio</b><small>Plano de reforma e ART exigidos pela NBR 16280</small></div><div><span>🔍</span><b>Laudos e vistorias</b><small>Inspeção, patologias, trincas e infiltração</small></div><div><span>🏗️</span><b>Gestão de obras</b><small>Acompanhamento, cronograma e diário de obra</small></div><div><span>🧮</span><b>Cálculo estrutural</b><small>Vigas, lajes, pilares e reforço</small></div><div><span>📄</span><b>Regularização</b><small>Habite-se e documentação do imóvel</small></div><div><span>🤝</span><b>Parceria</b><small>Você executa, a engenharia assina</small></div></div>
+ <div class="eng-b"><a class="eng-wa" target="_blank" href="https://wa.me/5524992096103?text=Ol%C3%A1%20Wilson!%20Vim%20pelo%20Foster%20Or%C3%A7a%20e%20preciso%20de%20um%20engenheiro.">💬 Falar com o engenheiro</a><a target="_blank" href="https://engfoster.com.br">engfoster.com.br</a><a target="_blank" href="https://instagram.com/foster.engenharia">@foster.engenharia</a></div>
+ <small class="eng-a">Atendimento em São Paulo e região.</small></div>
   <p class="hint" style="text-align:center">Foster Tech Soluções · Wilson Foster · (24) 99209-6103</p>
 </section>
 
@@ -523,7 +555,10 @@ function setFiltro(f){filtro=f;renderLista()}
 function setStatus(id,v){const o=DB.orcs.find(x=>x.id===id);o.status=v;save();renderLista()}
 function enviarDe(id){cur=DB.orcs.find(o=>o.id===id);enviarAprovacao();setTimeout(renderLista,300)}
 async function pdfDe(id){cur=DB.orcs.find(o=>o.id===id);await gerarPDF()}
-function renderLista(){const os=DB.orcs;const tot=o=>calc(o).total;const ym=new Date().toISOString().slice(0,7);
+function renderAviso(){const A=$('avisoPlano');if(!A)return;const c=CONTA;if(!c){A.innerHTML='';return}
+ if(c.plano==='teste'){const d=Math.max(0,Math.ceil((new Date(c.teste_ate)-Date.now())/864e5));A.innerHTML=`<div class="aviso ok" onclick="show('perfil')">🎁 <div><b>Teste grátis: tudo liberado</b><br>Faltam ${d} dia${d===1?'':'s'}. Use a IA por voz à vontade!</div></div>`}
+ else if(c.plano==='gratis'){const u=c.usados_mes||0,l=c.limite_gratis;A.innerHTML=`<div class="aviso" onclick="show('perfil')">📊 <div><b>Plano grátis: ${u} de ${l} orçamentos este mês</b><br>Assine para ter orçamentos ilimitados e IA por voz.</div></div>`}else A.innerHTML=''}
+function renderLista(){renderAviso();const os=DB.orcs;const tot=o=>calc(o).total;const ym=new Date().toISOString().slice(0,7);
  const mes=os.filter(o=>o.data.slice(0,7)===ym);const apr=os.filter(o=>o.status==='apr');const dec=os.filter(o=>['env','apr','rec'].includes(o.status));
  $('ola').textContent='Olá'+(DB.perfil.nome?', '+DB.perfil.nome.split(' ')[0]:'')+'!';
  $('kpis').innerHTML=`<div class="kpi hl"><span>Orçado no mês</span><b>${brl(mes.reduce((a,o)=>a+tot(o),0))}</b></div>
@@ -748,7 +783,11 @@ function propostaHTML(o,p){const c=calc(o);const M=materiais(o);const inc=o.matM
  <div class="fim"><h3>Condições</h3><div>Prazo estimado: <b>${o.prazo||'—'} dia(s) úteis</b><br>Pagamento: ${esc(o.pagamento||'—')}${o.obs?'<br>Obs.: '+esc(o.obs):''}<br><span style="color:#666;font-size:11px">Serviços não listados serão orçados à parte. Medidas sujeitas a conferência no local.</span></div>
  <div class="assin"><div>${esc(p.nome||'Profissional')}</div><div>${esc(o.cliente.nome||'Cliente')} — De acordo</div></div>
  ${o._pago||pago()?'':'<div style="text-align:center;font-size:11px;color:#d62828;margin-top:14px;border-top:1px dashed #ddd;padding-top:8px">Orçamento feito com <b>Foster Orça</b> · versão grátis · fosterfcs.github.io/foster-orca</div>'}</div></div>`}
-function verProposta(){$('propBox').innerHTML=propostaHTML(cur,DB.perfil);show('prop')}
+function dicaEng(o){const ids=new Set(o.itens.map(i=>i.sid));const m=[];
+ if(ids.has('demol_piso')||ids.has('alvenaria'))m.push('demolição ou parede nova');if(ids.has('chuveiro')||[...ids].filter(x=>['tomada','luz'].includes(x)).length&&o.itens.filter(i=>['tomada','luz'].includes(i.sid)).reduce((a,i)=>a+i.q,0)>=6)m.push('mudança na parte elétrica');
+ if(ids.has('agua')||ids.has('esgoto'))m.push('mexe na hidráulica');if(calc(o).total>=15000)m.push('obra de valor alto');
+ if(!m.length)return'';return`<div class="eng-dica"><b>💡 Esta obra pode precisar de ART</b><p>Ela tem ${m.join(', ')}. Em apartamento ou condomínio, a NBR 16280 exige plano de reforma com engenheiro responsável. Oferecer isso ao cliente passa mais segurança e evita a obra ser embargada pelo síndico.</p><a target="_blank" href="https://wa.me/5524992096103?text=${encodeURIComponent('Olá Wilson! Vim pelo Foster Orça. Tenho uma obra que precisa de ART ('+m.join(', ')+'). Pode me ajudar?')}">💬 Pedir ART / laudo para esta obra</a><small>Esta dica aparece só para você. Não vai no PDF do cliente.</small></div>`}
+function verProposta(){$('propBox').innerHTML=propostaHTML(cur,DB.perfil);$('engDica').innerHTML=dicaEng(cur);show('prop')}
 async function gerarPDF(){if(!window.html2pdf){toast('Sem internet para gerar PDF; use Ver → imprimir');return}toast('Gerando PDF…');
  const el=document.createElement('div');el.innerHTML=propostaHTML(cur,DB.perfil);el.style.cssText='width:740px;margin:0;padding:0;background:#fff';
  const nome=`Orcamento_${cur.num}_${(cur.cliente.nome||'cliente').replace(/\W+/g,'_')}.pdf`;
@@ -851,7 +890,7 @@ function authModo(m){authM=m;const b=$('authTabs').children;b[0].classList.toggl
  $('authTabs').classList.toggle('hide',m==='esqueci'||m==='nova');$('fNome').classList.toggle('hide',m!=='criar');$('fEmail').classList.toggle('hide',m==='nova');$('fSenha').classList.toggle('hide',m==='esqueci');
  $('lSenha').textContent=m==='nova'?'Nova senha (mínimo 6)':m==='criar'?'Crie uma senha (mínimo 6)':'Senha';$('aSenha').autocomplete=m==='entrar'?'current-password':'new-password';
  $('aBtn').textContent={entrar:'Entrar',criar:'Criar conta grátis',esqueci:'Enviar link para trocar a senha',nova:'Salvar nova senha'}[m];
- $('authSub').textContent={entrar:'Entre para salvar seus orçamentos na nuvem e usar em qualquer celular.',criar:'Grátis para começar: 3 orçamentos por mês, sem cartão.',esqueci:'Digite seu e-mail. Vamos mandar um link para você criar uma senha nova.',nova:'Digite a sua nova senha.'}[m];
+ $('authSub').textContent={entrar:'Entre para salvar seus orçamentos na nuvem e usar em qualquer celular.',criar:'7 dias com tudo liberado, inclusive a IA. Depois, 3 orçamentos grátis por mês. Sem cartão.',esqueci:'Digite seu e-mail. Vamos mandar um link para você criar uma senha nova.',nova:'Digite a sua nova senha.'}[m];
  $('lEsqueci').textContent=m==='entrar'?'Esqueci minha senha':'← Voltar para entrar';$('lEsqueci').onclick=()=>{authModo(m==='entrar'?'esqueci':'entrar');return false};setAuthMsg('')}
 const ERR_AUTH={'Invalid login credentials':'E-mail ou senha incorretos.','Email not confirmed':'Confirme seu e-mail antes de entrar (veja a caixa de entrada e o spam).','User already registered':'Este e-mail já tem conta. Toque em “Entrar”.','Password should be at least 6 characters.':'A senha precisa ter pelo menos 6 caracteres.'};
 async function authEnviar(e){e.preventDefault();if(!sb){setAuthMsg('Sem conexão com o servidor. Verifique a internet.','err');return}
@@ -875,7 +914,7 @@ async function aoLogar(sess){SESSAO=sess;const uid=sess.user.id;LKEY=KEY+'_'+uid
  DB.entrou=true;try{localStorage.setItem(LKEY,JSON.stringify(DB))}catch(e){}if(!nuvem)agendaSync(true);
  await carregarConta()}
 async function carregarConta(){if(!sb||!SESSAO)return;try{const {data,error}=await sb.rpc('orca_minha_conta');if(!error){CONTA=data;try{localStorage.setItem(LKEY+'_conta',JSON.stringify(data))}catch(e){}}}catch(e){}
- if(!CONTA){try{CONTA=JSON.parse(localStorage.getItem(LKEY+'_conta'))}catch(e){}}pintaIA();if(!$('tab-perfil').classList.contains('hide'))renderConta()}
+ if(!CONTA){try{CONTA=JSON.parse(localStorage.getItem(LKEY+'_conta'))}catch(e){}}pintaIA();renderAviso();if(!$('tab-perfil').classList.contains('hide'))renderConta()}
 function agendaSync(ja){if(!sb||!SESSAO)return;clearTimeout(syncT);syncT=setTimeout(async()=>{try{const {_conta,...d}=DB;await sb.from('orca_dados').upsert({user_id:SESSAO.user.id,dados:d,atualizado_em:new Date().toISOString()})}catch(e){}},ja?10:1500)}
 function abrirApp(){$('landing').classList.add('hide');$('authView').classList.add('hide');$('appView').classList.remove('hide');cur=null;show('lista');checaIA();
  if(PLANO_DEPOIS){const p=PLANO_DEPOIS;PLANO_DEPOIS=null;setTimeout(()=>pagarPix(p),300)}}
@@ -885,13 +924,14 @@ async function podeCriar(){if(!sb||!SESSAO)return true;try{const {data,error}=aw
  if(!data.ok){paywall(`Você já usou os ${data.limite} orçamentos grátis deste mês.`);return false}return true}catch(e){return true}}
 function renderConta(){if(!SESSAO){$('contaEmail').textContent='';$('contaPlano').innerHTML='';return}$('contaEmail').textContent=SESSAO.user.email;const c=CONTA;
  if(!c){$('contaPlano').innerHTML='<p class="hint">Carregando plano… (precisa de internet)</p>';return}
- const nomes={gratis:'Grátis',mensal:'Profissional mensal',anual:'Profissional anual'};const lim=c.limite_gratis,u=c.usados_mes||0;
+ const nomes={gratis:'Grátis',teste:'Teste grátis: tudo liberado',mensal:'Profissional mensal',anual:'Profissional anual'};const lim=c.limite_gratis,u=c.usados_mes||0;
  let h=`<div class="planbox ${pago()?'pago':''}"><small class="hint" style="margin:0">Seu plano</small><br><b>${nomes[c.plano]}</b>`;
- if(pago())h+=`<div class="hint" style="margin:4px 0 0">Válido até <b>${new Date(c.valido_ate).toLocaleDateString('pt-BR')}</b> · orçamentos ilimitados</div>`;
+ if(c.plano==='teste'){const d=Math.max(0,Math.ceil((new Date(c.teste_ate)-Date.now())/864e5));h+=`<div class="hint" style="margin:4px 0 0">Termina em <b>${d} dia${d===1?'':'s'}</b> (${new Date(c.teste_ate).toLocaleDateString('pt-BR')}). Depois: ${lim} orçamentos por mês, ou assine para continuar com tudo.</div>`}
+ else if(pago())h+=`<div class="hint" style="margin:4px 0 0">Válido até <b>${new Date(c.valido_ate).toLocaleDateString('pt-BR')}</b> · orçamentos ilimitados</div>`;
  else h+=`<div class="uso"><i style="width:${Math.min(100,u/lim*100)}%"></i></div><div class="hint" style="margin:0">${u} de ${lim} orçamentos usados este mês</div>`;
  h+='</div>';
  if(c.pendente)h+=`<div class="pg pendente" style="margin-top:10px"><b>Pagamento aguardando confirmação</b><div class="hint" style="margin:2px 0">Código ${c.pendente.codigo} · ${brl(+c.pendente.valor)} · plano ${c.pendente.plano}</div><div class="btns"><button class="btnA" onclick="mostrarPix(CONTA.pendente)">Ver QR Code do Pix</button><button class="btn2" onclick="carregarConta()">Já liberou?</button></div></div>`;
- h+=`<div class="btns" style="margin-top:10px">${pago()?`<button class="btn2" onclick="pagarPix('${c.plano}')">Renovar ${c.plano==='anual'?'anual':'mensal'}</button>`:`<button class="btnA" onclick="pagarPix('mensal')">Assinar ${brl(+c.precos.mensal)}/mês</button><button class="btnA" onclick="pagarPix('anual')">Assinar ${brl(+c.precos.anual)}/ano</button>`}<button class="btn2" onclick="verLanding('lp-planos')">Comparar planos</button></div>`;
+ h+=`<div class="btns" style="margin-top:10px">${pago()&&c.plano!=='teste'?`<button class="btn2" onclick="pagarPix('${c.plano}')">Renovar ${c.plano==='anual'?'anual':'mensal'}</button>`:`<button class="btnA" onclick="pagarPix('mensal')">Assinar ${brl(+c.precos.mensal)}/mês</button><button class="btnA" onclick="pagarPix('anual')">Assinar ${brl(+c.precos.anual)}/ano</button>`}<button class="btn2" onclick="verLanding('lp-planos')">Comparar planos</button></div>`;
  $('contaPlano').innerHTML=h;$('adminCard').classList.toggle('hide',!c.admin);if(c.admin&&!$('adminBox').dataset.ok)carregarAdmin()}
 function paywall(motivo){const c=CONTA||{precos:{mensal:19.9,anual:149}};abrirModal(`<h3>Libere tudo com o plano Profissional</h3><p class="hint" style="margin-top:0">${esc(motivo)}</p>
  <ul style="list-style:none;margin:10px 0 14px;line-height:1.9">${['Orçamentos ilimitados','Orçamento por voz com IA','PDF só com a sua marca','Link de aprovação no WhatsApp','Seus serviços, materiais e profissões'].map(x=>'<li>✅ '+x+'</li>').join('')}</ul>
