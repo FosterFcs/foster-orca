@@ -82,6 +82,49 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
 .meter{height:8px;background:#2b2d31;border-radius:6px;margin:10px 0;overflow:hidden}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#5fd68a,#e0a800,var(--red));transition:width .08s}
 .recLive{font-size:15px;min-height:22px;line-height:1.4}.recp .hint{color:#aab}
 .diag li{list-style:none;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}.diag small{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.hdr-btn{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;font-size:12px;padding:7px 10px}
+.lp{background:#fff;color:#1d2433;font-size:16px;line-height:1.5}
+.lp-top{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#111214;border-bottom:3px solid var(--red)}
+.lp-brand{display:flex;align-items:center;gap:8px;color:#fff}.lp-brand .logo{width:32px;height:32px;background:var(--red);color:#fff;font-weight:900;display:grid;place-items:center;clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%);font-size:12px}
+.lp-entrar{background:#fff;color:#111;padding:8px 14px;font-size:13px}
+.lp-hero{background:radial-gradient(circle at 85% 10%,rgba(214,40,40,.35),transparent 45%),linear-gradient(170deg,#111214,#2b2d31 75%);color:#fff;padding:34px 20px 40px;text-align:center}
+.lp-badge{display:inline-block;background:rgba(214,40,40,.2);border:1px solid rgba(214,40,40,.6);color:#ffb4b4;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px}
+.lp-hero h1{font-size:31px;line-height:1.15;margin:16px auto 12px;max-width:560px;font-weight:900}.lp-hero h1 span{color:#ff5a5a}
+.lp-hero p{opacity:.85;max-width:560px;margin:0 auto 20px;font-size:15.5px}.lp-hero small{display:block;opacity:.55;margin-top:12px;font-size:12px}
+.lp-ctas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.lp-btn{background:var(--red);color:#fff;padding:15px 24px;font-size:16px;border-radius:12px;box-shadow:0 8px 20px rgba(214,40,40,.35);font-weight:800}
+.lp-btn2{display:inline-block;background:transparent;color:inherit;border:2px solid currentColor;padding:13px 22px;font-size:15px;border-radius:12px;font-weight:700;text-decoration:none;cursor:pointer}
+.phone{width:250px;margin:30px auto 0;background:#000;border-radius:34px;padding:10px;box-shadow:0 25px 50px rgba(0,0,0,.5),0 0 0 2px #3d4047;transform:rotate(-2deg)}
+.ph-scr{background:#f4f5f7;border-radius:26px;padding:12px;text-align:left;color:#1d2433;font-size:11px}
+.ph-bar{width:70px;height:6px;background:#000;border-radius:6px;margin:0 auto 10px}
+.ph-mic{background:var(--red);color:#fff;border-radius:10px;padding:8px;font-weight:700;text-align:center;font-size:12px}
+.ph-txt{background:#111214;color:#fff;border-radius:10px;padding:8px;margin:6px 0;font-style:italic}
+.ph-plan{position:relative;height:70px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:6px}.ph-plan i{position:absolute;top:10%;left:6%;border:2px solid #1c1c1e;background:#fff}
+.ph-row{display:flex;justify-content:space-between;background:#fff;padding:5px 7px;border-radius:6px;margin-bottom:3px}
+.ph-tot{display:flex;justify-content:space-between;background:#fff;border-left:4px solid var(--red);padding:6px 8px;border-radius:6px;margin:6px 0;font-size:13px}.ph-tot b{font-size:15px}
+.ph-ok{background:var(--green);color:#fff;text-align:center;border-radius:8px;padding:7px;font-weight:700}
+.lp-sec{padding:40px 20px;max-width:880px;margin:0 auto}.lp-sec h2{font-size:24px;line-height:1.2;text-align:center;margin-bottom:8px;font-weight:900}.lp-sec h2 span{color:var(--red)}
+.lp-sub{text-align:center;color:#6b7280;font-size:14px;margin-bottom:18px}
+.lp-dark{background:#1c1c1e;color:#fff;max-width:none}.lp-dark>*{max-width:840px;margin-left:auto;margin-right:auto}.lp-dark h2 span{color:#ff5a5a}
+.lp-gray{background:#eceef1;max-width:none}.lp-gray>*{max-width:840px;margin-left:auto;margin-right:auto}
+.lp-vs{display:grid;grid-template-columns:1fr;gap:12px;margin-top:20px}@media(min-width:640px){.lp-vs{grid-template-columns:1fr 1fr}}
+.lp-vs>div{background:#2b2d31;border-radius:14px;padding:16px;border-top:4px solid var(--red)}.lp-vs>div.ok{border-top-color:#5fd68a}
+.lp-vs h4{margin-bottom:8px}.lp-vs ul{padding-left:18px;opacity:.9;font-size:15px}.lp-vs li{margin:6px 0}
+.lp-steps{display:grid;gap:12px;margin-top:20px}@media(min-width:640px){.lp-steps{grid-template-columns:repeat(3,1fr)}}
+.lp-steps>div{border:1px solid #e5e7eb;border-radius:14px;padding:18px;position:relative}.lp-steps span{display:grid;place-items:center;width:36px;height:36px;background:var(--red);color:#fff;font-weight:900;border-radius:50%;margin-bottom:8px}
+.lp-steps h4{font-size:18px}.lp-steps p{color:#4b5563;font-size:14.5px}
+.lp-feat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}@media(min-width:640px){.lp-feat{grid-template-columns:repeat(4,1fr)}}
+.lp-feat>div{background:#fff;border-radius:14px;padding:14px;font-size:24px;box-shadow:0 1px 3px rgba(0,0,0,.06)}.lp-feat b{display:block;font-size:14.5px;margin-top:4px}.lp-feat p{font-size:13px;color:#6b7280;line-height:1.35;margin-top:2px}
+.calc{max-width:480px;margin:0 auto;background:#fff;border:2px solid #1c1c1e;border-radius:16px;padding:18px}.calc label{display:block;font-size:14px;color:#1d2433;margin:0 0 12px;font-weight:600}.calc input{margin-top:4px}.calc input[type=range]{padding:0;accent-color:var(--red)}
+.calc-r{display:grid;grid-template-columns:1fr 1fr;gap:8px}.calc-r div{background:#fdecec;border-radius:12px;padding:12px;text-align:center}.calc-r small{display:block;color:#6b7280;font-size:12px}.calc-r b{font-size:22px;color:var(--red)}
+.lp-profs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}.lp-profs span{background:#2b2d31;border:1px solid #3d4047;padding:8px 14px;border-radius:20px;font-size:14px}
+.plans{display:grid;gap:14px;margin-top:10px}@media(min-width:720px){.plans{grid-template-columns:repeat(3,1fr);align-items:start}}
+.plan{border:2px solid #e5e7eb;border-radius:16px;padding:20px 18px;position:relative;background:#fff}.plan h4{font-size:17px}.plan .pr{font-size:30px;font-weight:900;margin-top:6px}.plan .pr s{font-size:15px;color:#9ca3af;font-weight:600}.plan .pr span{font-size:14px;color:#6b7280;font-weight:600}
+.plan small{color:#6b7280}.plan ul{list-style:none;margin:14px 0 18px}.plan li{padding:5px 0 5px 22px;position:relative;font-size:14.5px}.plan li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:900}
+.plan button{width:100%}.plan.best{border-color:var(--red);box-shadow:0 12px 30px rgba(214,40,40,.18)}.rib{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;white-space:nowrap}
+.faq{background:#fff;border-radius:12px;padding:6px 14px;margin-bottom:8px}.faq summary{font-weight:700;padding:8px 0}.faq p{color:#4b5563;font-size:14.5px;padding-bottom:10px}
+.lp-final{background:linear-gradient(160deg,#d62828,#9b1c1c);color:#fff;text-align:center;padding:44px 20px}.lp-final h2{font-size:24px;margin-bottom:18px;font-weight:900}.lp-final .lp-btn{background:#fff;color:var(--red);box-shadow:none}.lp-final p{margin-top:16px;font-size:14px}.lp-final a{color:#fff;font-weight:700}
+.lp-foot{background:#111214;color:#9ca3af;text-align:center;font-size:12px;padding:18px}
 .approve-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px;display:flex;gap:8px;box-shadow:0 -2px 10px rgba(0,0,0,.1)}
 .approve-bar button{flex:1;padding:15px}
 </style>
@@ -100,8 +143,111 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
 </div>
 
 <!-- ===== MODO PROFISSIONAL ===== -->
+<!-- ===== PÁGINA DE APRESENTAÇÃO ===== -->
+<div id="landing" class="hide">
+<div class="lp">
+ <div class="lp-top"><div class="lp-brand"><div class="logo">FO</div><b>Foster Orça</b></div><button class="lp-entrar" onclick="entrar()">Entrar no app</button></div>
+ <section class="lp-hero">
+  <span class="lp-badge">🎤 Lançamento · preço de fundador</span>
+  <h1>Fale o serviço.<br><span>O orçamento fica pronto</span> em 1 minuto.</h1>
+  <p>Pedreiro, pintor, eletricista, encanador, gesseiro ou qualquer profissional de obra: você descreve por voz e o Foster Orça monta o <b>croqui</b>, a <b>lista de material</b> e um <b>PDF profissional</b> para o cliente aprovar pelo WhatsApp.</p>
+  <div class="lp-ctas"><button class="lp-btn" onclick="entrar()">Começar grátis</button><a class="lp-btn2" href="#lp-planos" onclick="irPara(event,'lp-planos')">Ver planos</a></div>
+  <small>Sem cartão · Funciona no navegador do celular · Nada para instalar</small>
+  <div class="phone"><div class="ph-scr">
+   <div class="ph-bar"></div>
+   <div class="ph-mic">🎤 Ouvindo… 00:12</div>
+   <div class="ph-txt">“Quarto de 3 por 4, pintar parede e teto, assentar piso e 2 tomadas…”</div>
+   <div class="ph-plan"><i style="width:44%;height:52%"></i><i style="width:38%;height:62%;left:54%"></i><i style="width:26%;height:22%;top:72%"></i></div>
+   <div class="ph-row"><span>Pintura de parede</span><b>R$ 705</b></div><div class="ph-row"><span>Assentamento de piso</span><b>R$ 540</b></div><div class="ph-row"><span>Material: 10 L tinta, 8 sc argamassa…</span></div>
+   <div class="ph-tot"><span>TOTAL</span><b>R$ 6.160</b></div><div class="ph-ok">💬 Enviar para aprovar</div>
+  </div></div>
+ </section>
+
+ <section class="lp-sec lp-dark">
+  <h2>Você pode estar <span>trabalhando de graça</span> sem perceber</h2>
+  <div class="lp-vs">
+   <div><h4>❌ Do jeito de sempre</h4><ul><li>Preço passado de cabeça, na hora</li><li>Areia, cimento e entulho esquecidos na conta</li><li>Ajudante, almoço e transporte saindo do seu bolso</li><li>Combinado só de boca, sem nada por escrito</li><li>Perde a obra para quem parece mais profissional</li></ul></div>
+   <div class="ok"><h4>✅ Com o Foster Orça</h4><ul><li>Medidas e serviços calculados em segundos</li><li>Lista de material completa, com perda incluída</li><li>Campos para ajudante, almoço, caçamba e imprevistos</li><li>PDF com seu nome e espaço para assinatura</li><li>Cliente aprova pelo WhatsApp com um toque</li></ul></div>
+  </div>
+ </section>
+
+ <section class="lp-sec">
+  <h2>Como funciona</h2>
+  <div class="lp-steps">
+   <div><span>1</span><h4>Fale</h4><p>“Sala de 4 por 5, massa corrida e pintura, 2 pontos de luz.” Pode falar do seu jeito.</p></div>
+   <div><span>2</span><h4>Confira</h4><p>O app separa os cômodos, calcula áreas e material e aplica os seus preços. Ajuste o que quiser.</p></div>
+   <div><span>3</span><h4>Envie</h4><p>Mande o PDF ou o link de aprovação. Quando o cliente aprova, você recebe a mensagem no WhatsApp.</p></div>
+  </div>
+ </section>
+
+ <section class="lp-sec lp-gray">
+  <h2>Tudo que um orçamento profissional precisa</h2>
+  <div class="lp-feat">
+   <div>🎤<b>Orçamento por voz</b><p>Inteligência artificial que entende a fala do canteiro.</p></div>
+   <div>📐<b>Croqui automático</b><p>Desenho dos ambientes com medidas e áreas.</p></div>
+   <div>🧱<b>Lista de material</b><p>Cimento, areia, tinta, fio, tubo… com perda calculada.</p></div>
+   <div>💲<b>Sua tabela de preços</b><p>Cadastre seus serviços, materiais e até profissões novas.</p></div>
+   <div>📄<b>PDF com sua marca</b><p>Seu nome, contato, condições e assinatura do cliente.</p></div>
+   <div>✅<b>Aprovação no WhatsApp</b><p>Link para o cliente ver e aprovar com um toque.</p></div>
+   <div>📊<b>Controle de orçamentos</b><p>Enviados, aprovados, recusados e taxa de aprovação.</p></div>
+   <div>📥<b>Planilha e backup</b><p>Exporte para Excel e leve tudo para outro celular.</p></div>
+  </div>
+ </section>
+
+ <section class="lp-sec">
+  <h2>Quanto você deixa na mesa por mês?</h2>
+  <p class="lp-sub">Faça a conta com os seus números.</p>
+  <div class="calc">
+   <label>Obras fechadas por mês<input type="number" id="lcObras" value="4" oninput="calcPerda()"></label>
+   <label>Valor médio de cada obra (R$)<input type="number" id="lcValor" value="3000" oninput="calcPerda()"></label>
+   <label>Quanto fica esquecido no preço: <b id="lcPctT">8%</b><input type="range" id="lcPct" min="2" max="25" value="8" oninput="calcPerda()"></label>
+   <div class="calc-r"><div><small>Você perde por mês</small><b id="lcMes">R$ 960</b></div><div><small>Em um ano</small><b id="lcAno">R$ 11.520</b></div></div>
+   <p class="lp-sub" id="lcCmp" style="margin:10px 0 0"></p>
+  </div>
+ </section>
+
+ <section class="lp-sec lp-dark">
+  <h2>Feito para quem trabalha na obra</h2>
+  <div class="lp-profs"><span>Pedreiro</span><span>Pintor</span><span>Eletricista</span><span>Encanador</span><span>Gesseiro</span><span>Azulejista</span><span>Telhadista</span><span>Serralheiro</span><span>Marido de aluguel</span><span>Mestre de obras</span><span>Empreiteiro</span><span>+ qualquer serviço</span></div>
+ </section>
+
+ <section class="lp-sec" id="lp-planos">
+  <h2>Planos de lançamento</h2>
+  <p class="lp-sub">Quem assina agora garante o <b>preço de fundador</b> enquanto mantiver a assinatura.</p>
+  <div class="plans">
+   <div class="plan"><h4>Grátis</h4><div class="pr">R$ 0</div><small>para experimentar</small>
+    <ul><li>3 orçamentos por mês</li><li>Croqui e lista de material</li><li>PDF com selo Foster Orça</li><li>Tabela de preços padrão</li></ul>
+    <button class="lp-btn2" onclick="entrar()">Começar grátis</button></div>
+   <div class="plan"><h4>Profissional</h4><div class="pr"><s>R$ 29,90</s> R$ 19,90<span>/mês</span></div><small>preço de fundador</small>
+    <ul><li><b>Orçamentos ilimitados</b></li><li>Orçamento por voz com IA</li><li>PDF só com a sua marca</li><li>Link de aprovação no WhatsApp</li><li>Seus serviços, materiais e profissões</li><li>Planilha e backup</li></ul>
+    <button class="lp-btn" onclick="assinar('Profissional mensal — R$ 19,90/mês')">Assinar mensal</button></div>
+   <div class="plan best"><div class="rib">Mais vantajoso</div><h4>Profissional Anual</h4><div class="pr">R$ 149<span>/ano</span></div><small>sai por R$ 12,42/mês · economize R$ 89</small>
+    <ul><li>Tudo do Profissional</li><li>Preço de fundador travado</li><li>Prioridade em novidades</li><li>Suporte direto no WhatsApp</li></ul>
+    <button class="lp-btn" onclick="assinar('Profissional anual — R$ 149/ano')">Assinar anual</button></div>
+  </div>
+  <p class="lp-sub" style="margin-top:12px">Pix, cartão ou boleto. Direito de arrependimento de 7 dias garantido pelo Código de Defesa do Consumidor.</p>
+ </section>
+
+ <section class="lp-sec lp-gray">
+  <h2>Perguntas frequentes</h2>
+  <details class="faq"><summary>Preciso instalar alguma coisa?</summary><p>Não. Abre no navegador do celular. No Chrome você pode tocar em ⋮ → “Adicionar à tela inicial” para usar como aplicativo.</p></details>
+  <details class="faq"><summary>Funciona sem internet?</summary><p>Monta o orçamento sem internet, no modo offline. A IA por voz, o PDF e o envio pelo WhatsApp precisam de conexão.</p></details>
+  <details class="faq"><summary>Os preços já vêm prontos?</summary><p>Vem uma tabela de exemplo. Coloque o que você cobra na sua região e cadastre seus próprios serviços e materiais.</p></details>
+  <details class="faq"><summary>O cliente precisa baixar algo para aprovar?</summary><p>Não. Ele recebe um link no WhatsApp, vê o orçamento e toca em “Aprovar”.</p></details>
+  <details class="faq"><summary>Posso cancelar quando quiser?</summary><p>Sim, sem multa. No plano mensal você só não renova o próximo mês.</p></details>
+ </section>
+
+ <section class="lp-final">
+  <h2>Seu próximo orçamento pode ficar pronto em 1 minuto.</h2>
+  <button class="lp-btn" onclick="entrar()">Começar grátis agora</button>
+  <p>Dúvidas? <a href="https://wa.me/5524992096103?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Foster%20Or%C3%A7a">Fale no WhatsApp</a> · (24) 99209-6103</p>
+ </section>
+ <footer class="lp-foot">Foster Orça é um produto <b>Foster Tech Soluções</b> · Wilson Foster · comercial@fosterconstrucoes.com.br</footer>
+</div>
+</div>
+
 <div id="appView">
-<header><div class="logo">FO</div><div><h1>Foster Orça</h1><small>Fale o serviço, o app monta o orçamento</small></div></header>
+<header><div class="logo">FO</div><div style="flex:1"><h1>Foster Orça</h1><small>Fale o serviço, o app monta o orçamento</small></div><button class="hdr-btn" onclick="verLanding('lp-planos')">⭐ Planos</button></header>
 <main>
 
 <!-- LISTA -->
@@ -653,8 +799,17 @@ function exportarPlanilha(){if(!DB.orcs.length){toast('Nenhum orçamento para ex
  a.download='orcamentos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();toast('Planilha exportada')}
 function importar(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{let d;try{d=JSON.parse(t)}catch(e){toast('Arquivo inválido');return}if(!d||!d.perfil||!Array.isArray(d.orcs)){toast('Este arquivo não é uma cópia do Foster Orça');return}if(!confirm('Substituir os dados deste aparelho pela cópia ('+d.orcs.length+' orçamentos)?'))return;DB=d;cur=null;save();toast('Cópia restaurada');show('lista')})}
 
+/* ================= APRESENTAÇÃO / PLANOS ================= */
+function verLanding(sec){$('appView').classList.add('hide');$('landing').classList.remove('hide');calcPerda();setTimeout(()=>{const el=sec&&document.getElementById(sec);el?el.scrollIntoView():window.scrollTo(0,0)},30)}
+function entrar(){DB.entrou=true;save();$('landing').classList.add('hide');$('appView').classList.remove('hide');show('lista');checaIA()}
+function irPara(e,id){e.preventDefault();document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+function calcPerda(){const o=+$('lcObras').value||0,v=+$('lcValor').value||0,p=+$('lcPct').value||0;$('lcPctT').textContent=p+'%';const m=o*v*p/100;
+ $('lcMes').textContent=brl(m).replace(',00','');$('lcAno').textContent=brl(m*12).replace(',00','');
+ $('lcCmp').innerHTML=m>0?`O plano anual custa <b>R$ 149</b>. ${m*12>=149?'O que você perde no ano pagaria <b>'+Math.floor(m*12/149)+' anos</b> de assinatura.':'Menos do que uma obra bem cobrada.'}`:''}
+function assinar(plano){window.open('https://wa.me/5524992096103?text='+encodeURIComponent('Olá! Quero assinar o Foster Orça — '+plano+'.'+(DB.perfil.nome?' Meu nome: '+DB.perfil.nome+'.':'')),'_blank')}
+
 /* ================= INÍCIO ================= */
-if(location.hash.startsWith('#v='))abrirCliente();else{show('lista');checaIA()}
+if(location.hash.startsWith('#v='))abrirCliente();else if(!DB.entrou||location.hash==='#planos')verLanding(location.hash==='#planos'?'lp-planos':'');else{show('lista');checaIA()}
 </script>
 </body>
 </html>
