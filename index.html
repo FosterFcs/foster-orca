@@ -48,6 +48,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
 .prop h3{font-size:13px;margin:14px 0 6px;color:var(--navy);text-transform:uppercase;letter-spacing:.5px}
 .prop table{width:100%;border-collapse:collapse}.prop th{background:var(--navy);color:#fff;font-size:11px;padding:5px;text-align:left}.prop td{padding:5px;border-bottom:1px solid #ddd}
 .prop .big{font-size:20px;font-weight:800;color:var(--navy)}
+.prop tr,.prop .nobreak,.prop .fim{page-break-inside:avoid;break-inside:avoid}
 .prop .assin{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px;text-align:center;font-size:11px}.prop .assin div{border-top:1px solid #333;padding-top:4px}
 .totbar .btns{flex-wrap:nowrap;margin-top:8px}.totbar .btns button{flex:1;padding:9px 6px;font-size:13px}.totbar .tot{font-size:19px}
 .tbl td:first-child{font-size:12.5px}
@@ -610,7 +611,7 @@ function croquiSVG(comodos,W=640){const rs=comodos.filter(c=>c.l>0&&c.c>0);if(!r
  const maxRow=Math.max(10,...rs.map(c=>c.l));let x=0,y=0,rowH=0;const pos=[];
  rs.forEach(c=>{const w=c.l,h=c.plano?0.6:c.c;if(x+w>maxRow&&x>0){x=0;y+=rowH+1.2;rowH=0}pos.push({c,x,y,w,h});x+=w+1.2;rowH=Math.max(rowH,h)});
  const totW=Math.max(...pos.map(p=>p.x+p.w)),totH=y+rowH;const pad=1.2;const s=Math.min(W/(totW+pad*2),48);const H=(totH+pad*2)*s;
- let g=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${(totW+pad*2)*s} ${H}" width="100%" style="max-width:${W}px;background:#fafbfc;border:1px solid #e5e7eb;border-radius:10px;font-family:system-ui,Arial">`;
+ const VW=(totW+pad*2)*s;let g=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${VW} ${H}" width="${Math.round(VW)}" height="${Math.round(H)}" style="max-width:100%;height:auto;display:block;margin:0 auto;background:#fafbfc;border:1px solid #e5e7eb;border-radius:10px;font-family:system-ui,Arial">`;
  g+=`<defs><pattern id="gr" width="${s}" height="${s}" patternUnits="userSpaceOnUse"><path d="M ${s} 0 L 0 0 0 ${s}" fill="none" stroke="#eef0f4" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#gr)"/>`;
  pos.forEach(p=>{const X=(p.x+pad)*s,Y=(p.y+pad)*s,w=p.w*s,h=p.h*s;const fs=Math.max(9,Math.min(14,w/8));
   if(p.c.plano){g+=`<rect x="${X}" y="${Y}" width="${w}" height="${h}" fill="#d9d2c5" stroke="#1c1c1e" stroke-width="2"/>`;
@@ -621,6 +622,7 @@ function croquiSVG(comodos,W=640){const rs=comodos.filter(c=>c.l>0&&c.c>0);if(!r
   g+=`<text x="${X+w/2}" y="${Y-5}" text-anchor="middle" font-size="${Math.max(8,fs*.75)}" fill="#c0392b">${nf(p.c.l)} m</text>`;
   g+=`<text x="${X-5}" y="${Y+h/2}" text-anchor="middle" font-size="${Math.max(8,fs*.75)}" fill="#c0392b" transform="rotate(-90 ${X-5} ${Y+h/2})">${nf(p.c.c)} m</text>`});
  return g+'</svg>'}
+function croquiImg(c,W){const svg=croquiSVG(c,W);if(!svg)return'';const m=svg.match(/width="(\d+)" height="(\d+)"/);return `<img alt="Croqui" src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}" width="${m[1]}" height="${m[2]}" style="display:block;margin:0 auto;max-width:100%;height:auto">`}
 function renderCroqui(){const svg=croquiSVG(cur.comodos);$('croquiBox').innerHTML=svg?svg+'<p class="hint">Croqui ilustrativo, sem escala de projeto.</p>':''}
 
 /* ================= VOZ ================= */
@@ -736,21 +738,21 @@ function propostaHTML(o,p){const c=calc(o);const M=materiais(o);const inc=o.matM
  return`<div class="prop"><div class="ph"><div><div style="font-size:18px;font-weight:800;color:var(--navy)">${esc(p.nome||'Seu nome / empresa')}</div><div>${esc(p.tel||'')}${p.doc?' · '+esc(p.doc):''}${p.cidade?' · '+esc(p.cidade):''}</div></div>
  <div style="text-align:right"><div style="font-weight:800">ORÇAMENTO Nº ${o.num}</div><div>${dt}</div><div>Válido por ${o.validade||15} dias</div></div></div>
  <div><b>Cliente:</b> ${esc(o.cliente.nome||'—')}${o.cliente.tel?' · '+esc(o.cliente.tel):''}<br><b>Local:</b> ${esc(o.cliente.end||'—')}</div>
- ${o.comodos.some(x=>x.l&&x.c)?`<h3>Croqui dos ambientes</h3>${croquiSVG(o.comodos,560)}`:''}
+ ${o.comodos.some(x=>x.l&&x.c)?`<div class="nobreak"><h3>Croqui dos ambientes</h3>${croquiImg(o.comodos,520)}</div>`:''}
  <h3>Serviços</h3><table><tr><th>Descrição</th><th style="text-align:right">Qtd</th><th>Un</th><th style="text-align:right">Valor un.</th><th style="text-align:right">Total</th></tr>
  ${Object.entries(grupos).map(([g,its])=>`<tr><td colspan="5" style="background:#f4f5f7;font-weight:700">${esc(g)}</td></tr>`+its.map(it=>{const s=svc(it.sid)||{n:it.sid,u:''};return`<tr><td>${esc(s.n)}</td><td style="text-align:right">${nf(it.q)}</td><td>${s.u}</td><td style="text-align:right">${brl(it.pr)}</td><td style="text-align:right">${brl(it.q*it.pr)}</td></tr>`}).join('')).join('')}
  ${ex.map(x=>`<tr><td>${x[0]}</td><td style="text-align:right" colspan="2">${x[1]}</td><td></td><td style="text-align:right">${brl(x[2])}</td></tr>`).join('')}
  </table>
  ${M.length?`<h3>Materiais ${inc?'(inclusos no valor)':'(por conta do cliente)'}</h3><table><tr><th>Material</th><th style="text-align:right">Qtd</th><th>Un</th>${inc?'<th style="text-align:right">Total</th>':''}</tr>${M.map(m=>`<tr><td>${esc(m.n)}</td><td style="text-align:right">${nf(m.q)}</td><td>${m.u}</td>${inc?`<td style="text-align:right">${brl(m.t)}</td>`:''}</tr>`).join('')}</table>`:''}
- <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px;background:#f3f4f6;border-left:5px solid var(--red);border-radius:8px"><div>${c.marg?`<div style="font-size:11px;color:#666">Inclui reserva técnica para imprevistos</div>`:''}<b>VALOR TOTAL</b></div><div class="big">${brl(c.total)}</div></div>
- <h3>Condições</h3><div>Prazo estimado: <b>${o.prazo||'—'} dia(s) úteis</b><br>Pagamento: ${esc(o.pagamento||'—')}${o.obs?'<br>Obs.: '+esc(o.obs):''}<br><span style="color:#666;font-size:11px">Serviços não listados serão orçados à parte. Medidas sujeitas a conferência no local.</span></div>
+ <div class="nobreak" style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px;background:#f3f4f6;border-left:5px solid var(--red);border-radius:8px"><div>${c.marg?`<div style="font-size:11px;color:#666">Inclui reserva técnica para imprevistos</div>`:''}<b>VALOR TOTAL</b></div><div class="big">${brl(c.total)}</div></div>
+ <div class="fim"><h3>Condições</h3><div>Prazo estimado: <b>${o.prazo||'—'} dia(s) úteis</b><br>Pagamento: ${esc(o.pagamento||'—')}${o.obs?'<br>Obs.: '+esc(o.obs):''}<br><span style="color:#666;font-size:11px">Serviços não listados serão orçados à parte. Medidas sujeitas a conferência no local.</span></div>
  <div class="assin"><div>${esc(p.nome||'Profissional')}</div><div>${esc(o.cliente.nome||'Cliente')} — De acordo</div></div>
- ${o._pago||pago()?'':'<div style="text-align:center;font-size:11px;color:#d62828;margin-top:14px;border-top:1px dashed #ddd;padding-top:8px">Orçamento feito com <b>Foster Orça</b> · versão grátis · fosterfcs.github.io/foster-orca</div>'}</div>`}
+ ${o._pago||pago()?'':'<div style="text-align:center;font-size:11px;color:#d62828;margin-top:14px;border-top:1px dashed #ddd;padding-top:8px">Orçamento feito com <b>Foster Orça</b> · versão grátis · fosterfcs.github.io/foster-orca</div>'}</div></div>`}
 function verProposta(){$('propBox').innerHTML=propostaHTML(cur,DB.perfil);show('prop')}
 async function gerarPDF(){if(!window.html2pdf){toast('Sem internet para gerar PDF; use Ver → imprimir');return}toast('Gerando PDF…');
- const el=document.createElement('div');el.innerHTML=propostaHTML(cur,DB.perfil);el.style.width='760px';
+ const el=document.createElement('div');el.innerHTML=propostaHTML(cur,DB.perfil);el.style.cssText='width:740px;margin:0;padding:0;background:#fff';
  const nome=`Orcamento_${cur.num}_${(cur.cliente.nome||'cliente').replace(/\W+/g,'_')}.pdf`;
- const blob=await html2pdf().set({margin:[8,6,8,6],filename:nome,image:{type:'jpeg',quality:.95},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4'},pagebreak:{mode:['css','legacy']}}).from(el).outputPdf('blob');
+ const blob=await html2pdf().set({margin:[8,6,8,6],filename:nome,image:{type:'jpeg',quality:.95},html2canvas:{scale:2,useCORS:true,windowWidth:800,scrollY:0},jsPDF:{unit:'mm',format:'a4'},pagebreak:{mode:['css'],avoid:['tr','.nobreak','.fim']}}).from(el).outputPdf('blob');
  const f=new File([blob],nome,{type:'application/pdf'});
  if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Orçamento '+cur.num});return}catch(e){if(e.name==='AbortError')return}}
  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nome;a.click()}
