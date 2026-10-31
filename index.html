@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111214">
+<title>Foster Orça — Orçamento por Voz</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{--navy:#1c1c1e;--amber:#d62828;--red:#d62828;--graf:#2b2d31;--cinza:#3d4047;--green:#1e8449;--bg:#eceef1;--card:#fff;--ink:#1d2433;--mute:#6b7280;--line:#e5e7eb;--r:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:84px;font-size:15px}
+header{background:#111214;border-bottom:3px solid var(--red);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px}
+header .logo{width:34px;height:34px;background:var(--red);color:#fff;font-weight:900;display:grid;place-items:center;clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%);font-size:13px}
+header h1{font-size:17px;font-weight:700}header small{display:block;font-size:11px;opacity:.7;font-weight:400}
+main{max-width:760px;margin:0 auto;padding:14px}
+.card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card h2{font-size:16px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card h2 .n{background:var(--navy);color:#fff;width:22px;height:22px;border-radius:50%;font-size:12px;display:grid;place-items:center}
+label{font-size:12px;color:var(--mute);display:block;margin:8px 0 3px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+textarea{min-height:90px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row3{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:6px;align-items:end}
+button{font:inherit;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600}
+.btn{background:var(--navy);color:#fff}.btn2{background:#eef0f4;color:var(--ink)}.btnA{background:var(--red);color:#fff}.btnG{background:var(--green);color:#fff}.btnX{background:transparent;color:var(--red);padding:6px 8px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.mic{width:100%;padding:18px;font-size:17px;background:var(--red);color:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:10px}
+.mic.on{animation:pulse 1.2s infinite}@keyframes pulse{50%{opacity:.7;transform:scale(.98)}}
+.hint{font-size:12px;color:var(--mute);margin-top:6px;line-height:1.4}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}.tbl th{text-align:left;color:var(--mute);font-weight:600;font-size:11px;padding:6px 4px;border-bottom:1px solid var(--line)}
+.tbl td{padding:5px 3px;border-bottom:1px solid var(--line);vertical-align:middle}.tbl input,.tbl select{padding:6px;font-size:13px}
+.r{text-align:right}.tot{font-size:22px;font-weight:800;color:var(--navy)}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:#eef0f4;color:var(--mute)}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border-radius:0;padding:10px 4px;font-size:11px;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button b{font-size:20px}nav button.act{color:var(--red)}
+.hide{display:none!important}
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);gap:8px}
+.st{font-size:11px;padding:2px 8px;border-radius:20px}.st.rasc{background:#eef0f4}.st.env{background:#fff3cd;color:#8a6d00}.st.apr{background:#d4efdf;color:var(--green)}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:10px;z-index:99;font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:7px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:13px}.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+details summary{cursor:pointer;font-weight:600;padding:6px 0}
+/* proposta */
+.prop{background:#fff;color:#111;padding:24px;font-size:12.5px;max-width:760px;margin:0 auto}
+.prop .ph{display:flex;justify-content:space-between;border-bottom:3px solid var(--red);padding-bottom:10px;margin-bottom:12px;gap:10px}
+.prop h3{font-size:13px;margin:14px 0 6px;color:var(--navy);text-transform:uppercase;letter-spacing:.5px}
+.prop table{width:100%;border-collapse:collapse}.prop th{background:var(--navy);color:#fff;font-size:11px;padding:5px;text-align:left}.prop td{padding:5px;border-bottom:1px solid #ddd}
+.prop .big{font-size:20px;font-weight:800;color:var(--navy)}
+.prop .assin{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px;text-align:center;font-size:11px}.prop .assin div{border-top:1px solid #333;padding-top:4px}
+.totbar .btns{flex-wrap:nowrap;margin-top:8px}.totbar .btns button{flex:1;padding:9px 6px;font-size:13px}.totbar .tot{font-size:19px}
+.tbl td:first-child{font-size:12.5px}
+.hero{margin:-14px -14px 14px;background:linear-gradient(160deg,#111214 0%,#2b2d31 70%,#3d4047 100%);color:#fff;padding:18px 16px 20px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-40px;top:-40px;width:170px;height:170px;background:var(--red);opacity:.13;clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%)}
+.hero small{opacity:.65;font-size:12px}.hero h2{font-size:22px;margin:2px 0 14px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;position:relative;z-index:1}
+.kpi{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px}
+.kpi b{display:block;font-size:18px;margin-top:2px}.kpi span{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.4px}.kpi.hl{border-left:4px solid var(--red)}.kpi.ok b{color:#5fd68a}
+.cta{width:100%;background:var(--red);color:#fff;padding:16px;font-size:16px;border-radius:14px;box-shadow:0 6px 18px rgba(214,40,40,.35);position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:10px}
+.search{display:flex;gap:8px;align-items:center;background:#fff;border-radius:12px;padding:4px 10px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:10px}.search input{border:0;padding:10px 4px}
+.fchips{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px}.fchips .chip{white-space:nowrap}.fchips .chip.on{background:var(--red);border-color:var(--red)}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.oc{background:#fff;border-radius:14px;padding:14px 14px 12px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);border-left:5px solid #9ca3af;position:relative}
+.oc.env{border-left-color:#e0a800}.oc.apr{border-left-color:var(--green)}.oc.rec{border-left-color:var(--red)}
+.oc-h{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mute)}
+.oc-cli{font-size:17px;font-weight:700;margin:4px 0 2px;cursor:pointer}.oc-meta{font-size:12px;color:var(--mute);line-height:1.5}
+.oc-f{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.oc-tot{font-size:20px;font-weight:800;color:var(--navy)}.oc-act{display:flex;gap:4px}
+.ib{width:38px;height:38px;border-radius:10px;background:#f1f2f4;padding:0;font-size:16px;display:grid;place-items:center}.ib.r{background:#fdecec}
+.st-sel{width:auto;padding:3px 6px;font-size:11px;border-radius:20px;font-weight:700;border:0}
+.st-sel.rasc{background:#eef0f4}.st-sel.env{background:#fff3cd;color:#8a6d00}.st-sel.apr{background:#d4efdf;color:var(--green)}.st-sel.rec{background:#fdecec;color:var(--red)}
+.st.rec{background:#fdecec;color:var(--red)}
+.empty{text-align:center;padding:30px 16px;color:var(--mute)}.empty svg{width:120px;margin-bottom:10px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:80;display:flex;align-items:flex-end;justify-content:center}
+.modal .sheet{background:#fff;width:100%;max-width:620px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px 24px;border-top:4px solid var(--red)}
+.modal h3{font-size:18px;margin-bottom:4px}.mrow{display:grid;grid-template-columns:1fr 90px auto;gap:6px;align-items:center;margin-bottom:6px}
+.tabhead button{white-space:nowrap;padding:9px 12px}.tabhead h2{font-size:15px}
+.tabhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.tag{font-size:10px;background:var(--red);color:#fff;padding:1px 6px;border-radius:6px;margin-left:4px;vertical-align:middle}
+.iachip{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:#eef0f4;cursor:pointer;white-space:nowrap}.iachip.ok{background:#d4efdf;color:var(--green)}.iachip.off{background:#eef0f4;color:var(--mute)}.iachip.err{background:#fdecec;color:var(--red)}
+.recp{margin-top:10px;background:#111214;color:#fff;border-radius:14px;padding:12px 14px}.recl{display:flex;align-items:center;gap:8px}.recl b{flex:1}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--red);animation:blink 1s infinite}@keyframes blink{50%{opacity:.25}}
+.meter{height:8px;background:#2b2d31;border-radius:6px;margin:10px 0;overflow:hidden}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#5fd68a,#e0a800,var(--red));transition:width .08s}
+.recLive{font-size:15px;min-height:22px;line-height:1.4}.recp .hint{color:#aab}
+.diag li{list-style:none;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}.diag small{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.approve-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px;display:flex;gap:8px;box-shadow:0 -2px 10px rgba(0,0,0,.1)}
+.approve-bar button{flex:1;padding:15px}
+</style>
+</head>
+<body>
+
+<div id="modal" class="modal hide" onclick="if(event.target===this)fecharModal()"><div class="sheet" id="sheet"></div></div>
+<!-- ===== MODO CLIENTE (link de aprovação) ===== -->
+<div id="clientView" class="hide">
+  <div id="clientProp"></div>
+  <div style="height:90px"></div>
+  <div class="approve-bar">
+    <button class="btn2" onclick="clientReply(false)">Pedir ajuste</button>
+    <button class="btnG" onclick="clientReply(true)">✔ Aprovar orçamento</button>
+  </div>
+</div>
+
+<!-- ===== MODO PROFISSIONAL ===== -->
+<div id="appView">
+<header><div class="logo">FO</div><div><h1>Foster Orça</h1><small>Fale o serviço, o app monta o orçamento</small></div></header>
+<main>
+
+<!-- LISTA -->
+<section id="tab-lista">
+  <div class="hero">
+    <small id="ola">Olá!</small><h2>Meus orçamentos</h2>
+    <div class="kpis" id="kpis"></div>
+    <button class="cta" onclick="novoOrc()">🎤 Novo orçamento por voz</button>
+  </div>
+  <div class="search">🔎<input id="busca" placeholder="Buscar cliente, endereço ou nº" oninput="renderLista()"></div>
+  <div class="fchips" id="filtros"></div>
+  <div id="listaOrc"></div>
+</section>
+
+<!-- EDITOR -->
+<section id="tab-editor" class="hide">
+  <div class="card">
+    <h2><span class="n">1</span>Cliente</h2>
+    <div class="row"><div><label>Nome</label><input id="cNome" oninput="upd('cliente.nome',this.value)"></div>
+    <div><label>WhatsApp</label><input id="cTel" inputmode="tel" oninput="upd('cliente.tel',this.value)"></div></div>
+    <label>Endereço da obra</label><input id="cEnd" oninput="upd('cliente.end',this.value)">
+  </div>
+
+  <div class="card">
+    <div class="tabhead"><h2 style="margin:0"><span class="n">2</span>Descreva o serviço</h2><span class="iachip" id="iaChip" onclick="show('perfil');setTimeout(diagnostico,200)">⚪ verificando…</span></div>
+    <button id="micBtn" class="mic" onclick="toggleMic()">🎤 <span id="micTxt">Toque e fale o serviço</span></button>
+    <div id="recPanel" class="recp hide"><div class="recl"><span class="dot"></span><b id="recTit">Gravando</b><span id="recTime">00:00</span></div>
+      <div class="meter"><i id="recLvl"></i></div><div id="recLive" class="recLive">Pode falar…</div><div class="hint" id="recTip" style="margin-top:4px">Fale o cômodo, as medidas e os serviços. Toque de novo no botão para terminar.</div></div>
+    <label>O que você falou (pode corrigir ou digitar)</label>
+    <textarea id="fala" placeholder="Ex.: quarto de 3 por 4, pintar parede e teto, assentar piso, 2 tomadas. Banheiro de 2 por 1 e meio, azulejo na parede, ponto de água e vaso."></textarea>
+    <div class="btns"><button class="btn" onclick="interpretar()">⚙️ Montar orçamento</button><button class="btn2" onclick="exemplo()">Ver exemplo</button></div>
+    <p class="hint" id="iaHint"></p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">3</span>Cômodos e croqui</h2>
+    <div id="comodos"></div>
+    <div class="btns"><button class="btn2" onclick="addComodo()">＋ Cômodo</button></div>
+    <div id="croquiBox" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">4</span>Serviços</h2>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Serviço / cômodo</th><th class="r">Qtd</th><th>Un</th><th class="r">R$/un</th><th class="r">Total R$</th><th></th></tr></thead><tbody id="itens"></tbody></table></div>
+    <div class="btns"><select id="addServ" style="flex:1"></select><button class="btn2" onclick="addItem()">＋ Adicionar</button></div>
+    <button class="btn2" style="width:100%;margin-top:8px" onclick="formServ(null,true)">✨ Serviço que não está na lista (salva na Tabela)</button>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">5</span>Material</h2>
+    <div class="chips" style="margin-bottom:8px">
+      <button class="chip" id="matCli" onclick="setMat('cliente')">Cliente compra (só lista)</button>
+      <button class="chip" id="matInc" onclick="setMat('incluso')">Material incluso no preço</button>
+    </div>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Material</th><th class="r">Qtd</th><th>Un</th><th class="r matp">R$/un</th><th class="r matp">Total</th></tr></thead><tbody id="mats"></tbody></table></div>
+    <p class="hint">Quantidades calculadas com coeficientes de referência e perda. Ajuste na Tabela.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">6</span>O que todo mundo esquece</h2>
+    <div class="row">
+      <div><label>Diárias de ajudante</label><input type="number" id="xAjD" oninput="updN('extras.ajudanteDias',this.value)"></div>
+      <div><label>Valor da diária (R$)</label><input type="number" id="xAjV" oninput="updN('extras.ajudanteValor',this.value)"></div>
+      <div><label>Dias de almoço/transporte</label><input type="number" id="xAlD" oninput="updN('extras.almocoDias',this.value)"></div>
+      <div><label>Valor por dia (R$)</label><input type="number" id="xAlV" oninput="updN('extras.almocoValor',this.value)"></div>
+      <div><label>Caçambas de entulho</label><input type="number" id="xCaQ" oninput="updN('extras.cacambaQtd',this.value)"></div>
+      <div><label>Valor da caçamba (R$)</label><input type="number" id="xCaV" oninput="updN('extras.cacambaValor',this.value)"></div>
+    </div>
+    <label>Margem para imprevistos (%)</label><input type="number" id="xMg" oninput="updN('extras.margem',this.value)">
+  </div>
+
+  <div class="card">
+    <h2><span class="n">7</span>Condições</h2>
+    <div class="row"><div><label>Prazo (dias úteis)</label><input type="number" id="cPrazo" oninput="upd('prazo',this.value)"></div>
+    <div><label>Validade (dias)</label><input type="number" id="cVal" oninput="upd('validade',this.value)"></div></div>
+    <label>Pagamento</label><input id="cPag" oninput="upd('pagamento',this.value)">
+    <label>Observações</label><textarea id="cObs" style="min-height:60px" oninput="upd('obs',this.value)"></textarea>
+  </div>
+
+  <div class="card totbar" style="position:sticky;bottom:64px;z-index:10;border:2px solid var(--amber);padding:10px 12px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div><div class="hint" style="margin:0" id="totDet"></div><div class="tot" id="tot">R$ 0,00</div></div>
+    <span class="st" id="stBadge"></span></div>
+    <div class="btns">
+      <button class="btn" onclick="verProposta()">👁 Ver</button>
+      <button class="btnA" onclick="gerarPDF()">📄 PDF</button>
+      <button class="btnG" onclick="enviarAprovacao()">💬 Aprovação</button>
+    </div>
+  </div>
+</section>
+
+<!-- PROPOSTA (pré-visualização) -->
+<section id="tab-prop" class="hide">
+  <div class="btns" style="margin:0 0 10px"><button class="btn2" onclick="show('editor')">← Voltar</button><button class="btnA" onclick="gerarPDF()">📄 Baixar / compartilhar PDF</button><button class="btn2" onclick="marcar('apr')">Marcar aprovado</button></div>
+  <div id="propBox" style="border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)"></div>
+</section>
+
+<!-- TABELA -->
+<section id="tab-tabela" class="hide">
+  <div class="card"><h2>Minhas profissões</h2><div class="chips" id="profChips"></div>
+  <p class="hint">Só os serviços das profissões marcadas aparecem para adicionar. Para criar uma profissão nova (serralheiro, telhadista…), use “Incluir serviço” → “Nova profissão”.</p></div>
+  <div class="card"><div class="tabhead"><h2 style="margin:0">Serviços (mão de obra)</h2><button class="btnA" onclick="formServ()">＋ Incluir serviço</button></div>
+  <input id="buscaServ" placeholder="🔎 Buscar serviço" oninput="renderTabela()" style="margin:6px 0 4px">
+  <div id="tabServ"></div>
+  <p class="hint">Valores de exemplo: coloque o preço que você cobra. Toque em ✏️ para mudar nome, unidade, cálculo, palavras faladas e materiais.</p></div>
+  <div class="card"><div class="tabhead"><h2 style="margin:0">Materiais</h2><button class="btnA" onclick="formMat()">＋ Incluir material</button></div><div id="tabMat"></div></div>
+</section>
+
+<!-- PERFIL -->
+<section id="tab-perfil" class="hide">
+  <div class="card"><h2>Seus dados (saem no PDF)</h2>
+    <label>Nome / Empresa</label><input id="pNome" oninput="upP('nome',this.value)">
+    <div class="row"><div><label>WhatsApp (com DDD)</label><input id="pTel" inputmode="tel" oninput="upP('tel',this.value)"></div>
+    <div><label>CPF/CNPJ (opcional)</label><input id="pDoc" oninput="upP('doc',this.value)"></div></div>
+    <label>Cidade</label><input id="pCid" oninput="upP('cidade',this.value)">
+    <label>Pé-direito padrão (m)</label><input type="number" step="0.05" id="pPD" oninput="upP('pd',parseFloat(this.value)||2.8)">
+  </div>
+  
+  <div class="card"><h2>Testar o app</h2><p class="hint" style="margin-top:0">Confere microfone, reconhecimento de voz e a IA, e mostra o que fazer se algo não estiver OK.</p>
+    <button class="btn" style="width:100%" onclick="diagnostico()">🩺 Testar agora</button><ul class="diag" id="diagRes"></ul></div>
+  <div class="card"><h2>Exportar e backup</h2>
+    <button class="btnA" style="width:100%" onclick="exportarPlanilha()">📊 Exportar orçamentos (planilha Excel)</button>
+    <p class="hint">Abre no Excel ou no Google Planilhas: um orçamento por linha, com cliente, data, situação e valores.</p>
+    <div class="btns"><button class="btn2" onclick="exportar()">💾 Salvar cópia de segurança</button><button class="btn2" onclick="document.getElementById('imp').click()">📂 Restaurar cópia</button><input type="file" id="imp" class="hide" accept=".json" onchange="importar(this)"></div>
+    <p class="hint">A cópia de segurança (.json) não é para abrir e ler: guarde no Drive ou no WhatsApp e use “Restaurar cópia” para recuperar tudo ao trocar de celular.</p></div>
+  <p class="hint" style="text-align:center">Foster Tech Soluções · Wilson Foster · (24) 99209-6103</p>
+</section>
+
+</main>
+<nav>
+  <button data-t="lista" onclick="show('lista')" class="act"><b>📋</b>Orçamentos</button>
+  <button data-t="editor" onclick="show('editor')"><b>🎤</b>Editor</button>
+  <button data-t="tabela" onclick="show('tabela')"><b>💲</b>Tabela</button>
+  <button data-t="perfil" onclick="show('perfil')"><b>👤</b>Perfil</button>
+</nav>
+</div>
+
+<script>
+/* ================= CATÁLOGO PADRÃO ================= */
+const PROFS0={pedreiro:'Pedreiro',pintor:'Pintor',eletricista:'Eletricista',encanador:'Encanador',gesseiro:'Gesseiro'};
+const profs=()=>({...PROFS0,...(DB.perfil.profsExtra||{})});
+// base: piso | teto | parede | perimetro | un | m2 (manual)
+const SERV0=[
+ {id:'demol_piso',p:'pedreiro',n:'Demolição de piso',u:'m²',base:'piso',pr:25,mat:{}},
+ {id:'contrapiso',p:'pedreiro',n:'Contrapiso (5 cm)',u:'m²',base:'piso',pr:35,mat:{cimento:.4,areia:.06}},
+ {id:'piso',p:'pedreiro',n:'Assentamento de piso',u:'m²',base:'piso',pr:45,mat:{piso:1.1,argamassa:.25,rejunte:.3}},
+ {id:'rodape',p:'pedreiro',n:'Rodapé',u:'m',base:'perimetro',pr:15,mat:{argamassa:.03}},
+ {id:'azulejo',p:'pedreiro',n:'Revestimento de parede (azulejo)',u:'m²',base:'parede',pr:50,mat:{revest:1.1,argamassa:.25,rejunte:.3}},
+ {id:'chapisco',p:'pedreiro',n:'Chapisco',u:'m²',base:'parede',pr:10,mat:{cimento:.05,areia:.006}},
+ {id:'reboco',p:'pedreiro',n:'Reboco (2 cm)',u:'m²',base:'parede',pr:35,mat:{cimento:.15,areia:.03,cal:.1}},
+ {id:'alvenaria',p:'pedreiro',n:'Alvenaria de bloco',u:'m²',base:'m2',pr:55,mat:{bloco:13,cimento:.1,areia:.02}},
+ {id:'massa',p:'pintor',n:'Massa corrida (2 demãos)',u:'m²',base:'parede',pr:15,mat:{massa:.6,lixa:.3}},
+ {id:'pint_parede',p:'pintor',n:'Pintura de parede (2 demãos)',u:'m²',base:'parede',pr:18,mat:{tinta:.09,selador:.04}},
+ {id:'pint_teto',p:'pintor',n:'Pintura de teto (2 demãos)',u:'m²',base:'teto',pr:22,mat:{tinta:.09,selador:.04}},
+ {id:'rev_tomada',p:'eletricista',n:'Revisão / troca de tomada ou interruptor',u:'un',base:'un',pr:35,mat:{}},
+ {id:'rev_luz',p:'eletricista',n:'Revisão / troca de ponto de luz',u:'un',base:'un',pr:40,mat:{}},
+ {id:'tomada',p:'eletricista',n:'Ponto de tomada',u:'un',base:'un',pr:80,mat:{fio25:8,tomada:1,caixa:1,eletroduto:3}},
+ {id:'luz',p:'eletricista',n:'Ponto de luz com interruptor',u:'un',base:'un',pr:80,mat:{fio15:8,interruptor:1,caixa:2,eletroduto:4}},
+ {id:'chuveiro',p:'eletricista',n:'Ponto de chuveiro',u:'un',base:'un',pr:150,mat:{fio6:12,disjuntor:1,eletroduto:6}},
+ {id:'agua',p:'encanador',n:'Ponto de água',u:'un',base:'un',pr:120,mat:{tubo25:3,conexao:4}},
+ {id:'esgoto',p:'encanador',n:'Ponto de esgoto',u:'un',base:'un',pr:120,mat:{tubo40:3,conexao:3}},
+ {id:'vaso',p:'encanador',n:'Instalação de vaso sanitário',u:'un',base:'un',pr:150,mat:{anel:1}},
+ {id:'forro',p:'gesseiro',n:'Forro de gesso',u:'m²',base:'teto',pr:60,mat:{placa:1.05}},
+ {id:'sanca',p:'gesseiro',n:'Sanca de gesso',u:'m',base:'perimetro',pr:45,mat:{}},
+];
+const MAT0={cimento:{n:'Cimento 50 kg',u:'sc',pr:38},areia:{n:'Areia média',u:'m³',pr:150},cal:{n:'Cal 20 kg',u:'sc',pr:18},
+ piso:{n:'Piso cerâmico',u:'m²',pr:40},revest:{n:'Revestimento de parede',u:'m²',pr:45},argamassa:{n:'Argamassa AC 20 kg',u:'sc',pr:22},rejunte:{n:'Rejunte',u:'kg',pr:9},
+ bloco:{n:'Bloco 14×19×39',u:'un',pr:3.5},massa:{n:'Massa corrida',u:'kg',pr:4},lixa:{n:'Lixa',u:'un',pr:1.5},tinta:{n:'Tinta acrílica',u:'L',pr:28},selador:{n:'Selador',u:'L',pr:18},
+ fio15:{n:'Fio 1,5 mm',u:'m',pr:2},fio25:{n:'Fio 2,5 mm',u:'m',pr:3},fio6:{n:'Fio 6 mm',u:'m',pr:7},tomada:{n:'Tomada',u:'un',pr:15},interruptor:{n:'Interruptor',u:'un',pr:15},
+ caixa:{n:'Caixa 4×2',u:'un',pr:3},eletroduto:{n:'Eletroduto corrugado',u:'m',pr:2.5},disjuntor:{n:'Disjuntor',u:'un',pr:25},
+ tubo25:{n:'Tubo PVC 25 mm',u:'m',pr:8},tubo40:{n:'Tubo PVC 40 mm',u:'m',pr:9},conexao:{n:'Conexões PVC',u:'un',pr:4},anel:{n:'Anel de vedação',u:'un',pr:15},placa:{n:'Placa de gesso',u:'m²',pr:22}};
+
+// palavras-chave da fala → serviço
+const KW=[
+ ['demol_piso',/(demol\w*|quebr\w*|tir\w*|arranc\w*)\s+(o\s+)?piso/],
+ ['contrapiso',/contra\s?piso/],
+ ['piso',/(?<!contra\s?)(piso|porcelanato|cer[aâ]mica no ch[aã]o|ch[aã]o)/],
+ ['rodape',/rodap[eé]/],
+ ['azulejo',/azulej\w*|revestimento|revestir/],
+ ['chapisco',/chapisc\w*/],
+ ['reboco',/reboc\w*|emboc\w*/],
+ ['alvenaria',/alvenaria|levantar (a |uma )?parede|subir (a |uma )?parede|bloco/],
+ ['massa',/massa corrida|emass\w*/],
+ ['pint_teto',/pint\w*[^.;]*teto|teto[^.;]*pint\w*/],
+ ['pint_parede',/pint\w*/],
+ ['rev_tomada',/(revis\w*|troc\w*|consert\w*|manuten\w*)\s+(?:d[aeo]s?\s+)?(?:\d+\s+)?(?:pontos?\s+de\s+)?(tomadas?|interruptor\w*)/],
+ ['rev_luz',/(revis\w*|troc\w*|consert\w*|manuten\w*)\s+(?:d[aeo]s?\s+)?(?:\d+\s+)?(?:pontos?\s+de\s+luz|l[aâ]mpadas?|lumin[aá]ri\w*)/],
+ ['tomada',/tomadas?/],
+ ['luz',/ponto de luz|pontos de luz|interruptor|l[aâ]mpadas?|lumin[aá]ri\w*/],
+ ['chuveiro',/chuveiro/],
+ ['agua',/ponto de [aá]gua|pontos de [aá]gua|torneira/],
+ ['esgoto',/esgoto|ralo/],
+ ['vaso',/vaso|bacia sanit/],
+ ['forro',/forro|rebaixamento|gesso no teto/],
+ ['sanca',/sanca/],
+];
+const ROOM_RE=/\b(quarto|sala|cozinha|banheiro|lavabo|varanda|garagem|corredor|lavanderia|[aá]rea de servi[cç]o|escrit[oó]rio|su[ií]te|muro|fachada|cal[cç]ada|quintal)\b/g;
+
+/* ================= IA (servidor Foster) =================
+   A chave da Groq fica só no servidor (Supabase Edge Function "orca-ia").
+   Cole aqui a URL da função depois de publicada. Vazio = modo offline (regras próprias). */
+const IA_URL='https://fvsdlpnvqfvjdxmfgbjx.supabase.co/functions/v1/orca-ia';
+const iaOn=()=>!!IA_URL;
+async function ia(acao,body,isForm){const r=await fetch(IA_URL+'?acao='+acao,{method:'POST',headers:isForm?{}:{'Content-Type':'application/json'},body:isForm?body:JSON.stringify(body)});if(!r.ok)throw new Error('ia '+r.status);return r.json()}
+
+/* ================= ESTADO ================= */
+const KEY='fosterOrca_v1';
+let DB=load();let cur=null;
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d){SERV0.forEach((x,i)=>{if(!d.serv.find(y=>y.id===x.id))d.serv.splice(Math.min(i,d.serv.length),0,JSON.parse(JSON.stringify(x)))});for(const k in MAT0)if(!d.mat[k])d.mat[k]={...MAT0[k]};return d}}catch(e){}
+ return{perfil:{nome:'',tel:'',doc:'',cidade:'',pd:2.8,profs:['pedreiro','pintor','eletricista','encanador']},serv:JSON.parse(JSON.stringify(SERV0)),mat:JSON.parse(JSON.stringify(MAT0)),orcs:[],seq:1}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+const $=id=>document.getElementById(id);
+const brl=v=>(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const nf=(v,d=2)=>(+v||0).toLocaleString('pt-BR',{maximumFractionDigits:d});
+const svc=id=>DB.serv.find(s=>s.id===id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+
+/* ================= NAVEGAÇÃO ================= */
+function show(t){if(t==='editor'&&!cur){novoOrc();return}
+ ['lista','editor','prop','tabela','perfil'].forEach(x=>$('tab-'+x).classList.toggle('hide',x!==t));
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('act',b.dataset.t===t||(t==='prop'&&b.dataset.t==='editor')));
+ if(t==='lista')renderLista();if(t==='tabela')renderTabela();if(t==='perfil')renderPerfil();if(t==='editor')renderEditor();window.scrollTo(0,0)}
+
+/* ================= ORÇAMENTOS ================= */
+function novoOrc(){cur={id:Date.now().toString(36),num:DB.seq++,data:new Date().toISOString(),status:'rasc',cliente:{nome:'',tel:'',end:''},fala:'',comodos:[],itens:[],
+ matModo:'cliente',extras:{ajudanteDias:0,ajudanteValor:150,almocoDias:0,almocoValor:30,cacambaQtd:0,cacambaValor:450,margem:10},prazo:'',validade:15,pagamento:'50% no início e 50% na entrega',obs:''};
+ DB.orcs.unshift(cur);save();show('editor')}
+function abrir(id){cur=DB.orcs.find(o=>o.id===id);show('editor')}
+function apagar(id){if(!confirm('Apagar este orçamento?'))return;DB.orcs=DB.orcs.filter(o=>o.id!==id);if(cur&&cur.id===id)cur=null;save();renderLista()}
+function duplicar(id){const o=JSON.parse(JSON.stringify(DB.orcs.find(x=>x.id===id)));o.id=Date.now().toString(36);o.num=DB.seq++;o.status='rasc';o.data=new Date().toISOString();o.cliente={nome:'',tel:'',end:''};DB.orcs.unshift(o);save();abrir(o.id)}
+const ST={rasc:'Rascunho',env:'Enviado',apr:'Aprovado',rec:'Recusado'};let filtro='todos';
+function setFiltro(f){filtro=f;renderLista()}
+function setStatus(id,v){const o=DB.orcs.find(x=>x.id===id);o.status=v;save();renderLista()}
+function enviarDe(id){cur=DB.orcs.find(o=>o.id===id);enviarAprovacao();setTimeout(renderLista,300)}
+async function pdfDe(id){cur=DB.orcs.find(o=>o.id===id);await gerarPDF()}
+function renderLista(){const os=DB.orcs;const tot=o=>calc(o).total;const ym=new Date().toISOString().slice(0,7);
+ const mes=os.filter(o=>o.data.slice(0,7)===ym);const apr=os.filter(o=>o.status==='apr');const dec=os.filter(o=>['env','apr','rec'].includes(o.status));
+ $('ola').textContent='Olá'+(DB.perfil.nome?', '+DB.perfil.nome.split(' ')[0]:'')+'!';
+ $('kpis').innerHTML=`<div class="kpi hl"><span>Orçado no mês</span><b>${brl(mes.reduce((a,o)=>a+tot(o),0))}</b></div>
+ <div class="kpi ok"><span>Aprovado</span><b>${brl(apr.reduce((a,o)=>a+tot(o),0))}</b></div>
+ <div class="kpi"><span>Taxa de aprovação</span><b>${dec.length?Math.round(apr.length/dec.length*100):0}%</b></div>
+ <div class="kpi"><span>Aguardando cliente</span><b>${os.filter(o=>o.status==='env').length}</b></div>`;
+ const cnt=k=>k==='todos'?os.length:os.filter(o=>o.status===k).length;
+ $('filtros').innerHTML=['todos','rasc','env','apr','rec'].map(k=>`<button class="chip ${filtro===k?'on':''}" onclick="setFiltro('${k}')">${k==='todos'?'Todos':ST[k]} (${cnt(k)})</button>`).join('');
+ const q=($('busca').value||'').toLowerCase().trim();
+ const L=os.filter(o=>(filtro==='todos'||o.status===filtro)&&(!q||[o.cliente.nome,o.cliente.end,o.cliente.tel,'#'+o.num,String(o.num)].join(' ').toLowerCase().includes(q)));
+ if(!os.length){$('listaOrc').innerHTML=`<div class="empty"><svg viewBox="0 0 120 100"><rect x="20" y="10" width="64" height="80" rx="8" fill="#fff" stroke="#2b2d31" stroke-width="3"/><path d="M32 32h40M32 46h40M32 60h24" stroke="#c4c7cc" stroke-width="5" stroke-linecap="round"/><circle cx="88" cy="70" r="20" fill="#d62828"/><rect x="83" y="58" width="10" height="16" rx="5" fill="#fff"/><path d="M79 70a9 9 0 0 0 18 0M88 79v5" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+ <b style="color:var(--ink);font-size:16px">Nenhum orçamento ainda</b><p style="margin-top:6px">Toque em <b>Novo orçamento por voz</b>, fale o serviço e o app monta tudo: croqui, material e PDF.</p></div>`;return}
+ if(!L.length){$('listaOrc').innerHTML='<div class="empty">Nada encontrado com esse filtro.</div>';return}
+ $('listaOrc').innerHTML=L.map(o=>{const nS=o.itens.length;const amb=o.comodos.map(c=>c.nome).slice(0,3).join(', ');return`<div class="oc ${o.status}">
+ <div class="oc-h"><span>Nº ${o.num} · ${new Date(o.data).toLocaleDateString('pt-BR')}</span>
+ <select class="st-sel ${o.status}" onchange="setStatus('${o.id}',this.value)">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${o.status===k?'selected':''}>${v}</option>`).join('')}</select></div>
+ <div class="oc-cli" onclick="abrir('${o.id}')">${esc(o.cliente.nome||'Cliente sem nome')}</div>
+ <div class="oc-meta">${o.cliente.end?'📍 '+esc(o.cliente.end)+'<br>':''}🧱 ${nS} serviço(s)${amb?' · '+esc(amb):''}</div>
+ <div class="oc-f"><div class="oc-tot">${brl(tot(o))}</div><div class="oc-act">
+ <button class="ib" title="Abrir" onclick="abrir('${o.id}')">✏️</button><button class="ib" title="PDF" onclick="pdfDe('${o.id}')">📄</button>
+ <button class="ib" title="Enviar no WhatsApp" onclick="enviarDe('${o.id}')">💬</button><button class="ib" title="Duplicar" onclick="duplicar('${o.id}')">⧉</button>
+ <button class="ib r" title="Apagar" onclick="apagar('${o.id}')">🗑</button></div></div></div>`}).join('')}
+function marcar(s){cur.status=s;save();toast('Marcado como '+ST[s]);renderEditor()}
+
+/* ================= EDITOR ================= */
+function setPath(o,p,v){const k=p.split('.');let x=o;while(k.length>1)x=x[k.shift()];x[k[0]]=v}
+function upd(p,v){setPath(cur,p,v);save();refreshTot()}
+function updN(p,v){setPath(cur,p,parseFloat(v)||0);save();refreshTot()}
+function renderEditor(){if(!cur)return;const o=cur;
+ $('cNome').value=o.cliente.nome;$('cTel').value=o.cliente.tel;$('cEnd').value=o.cliente.end;$('fala').value=o.fala||'';
+ const e=o.extras;$('xAjD').value=e.ajudanteDias;$('xAjV').value=e.ajudanteValor;$('xAlD').value=e.almocoDias;$('xAlV').value=e.almocoValor;$('xCaQ').value=e.cacambaQtd;$('xCaV').value=e.cacambaValor;$('xMg').value=e.margem;
+ $('cPrazo').value=o.prazo;$('cVal').value=o.validade;$('cPag').value=o.pagamento;$('cObs').value=o.obs;
+ pintaIA();
+ $('addServ').innerHTML=DB.serv.filter(s=>DB.perfil.profs.includes(s.p)).map(s=>`<option value="${s.id}">${profs()[s.p]||s.p} · ${esc(s.n)}</option>`).join('');
+ renderComodos();renderItens();renderMats()}
+
+function renderComodos(){const o=cur;
+ $('comodos').innerHTML=o.comodos.length?o.comodos.map((c,i)=>`<div class="row3" style="margin-bottom:6px">
+ <div><label>${i?'':'Cômodo'}</label><input value="${esc(c.nome)}" oninput="cur.comodos[${i}].nome=this.value;save();renderCroqui();renderItensSel()"></div>
+ <div><label>${i?'':'Larg. (m)'}</label><input type="number" step="0.05" value="${c.l||''}" oninput="setDim(${i},'l',this.value)"></div>
+ <div><label>${i?'':'Comp. (m)'}</label><input type="number" step="0.05" value="${c.c||''}" oninput="setDim(${i},'c',this.value)"></div>
+ <div><label>${i?'':(c.plano?'—':'Pé-dir.')}</label><input type="number" step="0.05" value="${c.plano?'':(c.pd||'')}" ${c.plano?'disabled placeholder="plano"':''} oninput="setDim(${i},'pd',this.value)"></div>
+ <button class="btnX" onclick="delComodo(${i})">✕</button></div>`).join(''):'<p class="hint">Os cômodos aparecem aqui depois que você fala o serviço.</p>';
+ renderCroqui()}
+function setDim(i,k,v){cur.comodos[i][k]=parseFloat(v)||0;recalcAuto();save();renderCroqui();renderItens();renderMats()}
+function addComodo(){cur.comodos.push({nome:'Cômodo '+(cur.comodos.length+1),l:3,c:3,pd:DB.perfil.pd});recalcAuto();save();renderComodos();renderItens();renderMats()}
+function delComodo(i){const n=cur.comodos[i].nome;cur.comodos.splice(i,1);cur.itens.forEach(it=>{if(it.com===n){it.com='';}});recalcAuto();save();renderComodos();renderItens();renderMats()}
+
+function geo(c){if(!c)return{piso:0,teto:0,parede:0,perimetro:0};const l=+c.l||0,cc=+c.c||0,pd=+c.pd||DB.perfil.pd||2.8;
+ if(c.plano)return{piso:0,teto:0,parede:l*cc,perimetro:l,m2:l*cc};
+ return{piso:l*cc,teto:l*cc,parede:2*(l+cc)*pd,perimetro:2*(l+cc),m2:l*cc}}
+function autoQtd(it){const s=svc(it.sid);if(!s)return it.q;if(s.base==='un'||(s.base==='m2'&&!it.com))return it.q;
+ const c=cur.comodos.find(x=>x.nome===it.com);if(!c)return it.q;const g=geo(c);return +(g[s.base==='m2'?'m2':s.base]||0).toFixed(2)}
+function recalcAuto(){cur.itens.forEach(it=>{if(it.auto)it.q=autoQtd(it)})}
+
+function renderItensSel(){renderItens()}
+function renderItens(){const o=cur;const opts=n=>['<option value="">Geral</option>'].concat(o.comodos.map(c=>`<option ${c.nome===n?'selected':''}>${esc(c.nome)}</option>`)).join('');
+ $('itens').innerHTML=o.itens.length?o.itens.map((it,i)=>{const s=svc(it.sid)||{n:it.sid,u:''};return`<tr><td style="min-width:120px">${esc(s.n)}<select style="margin-top:3px;font-size:12px;padding:4px" onchange="itCom(${i},this.value)">${opts(it.com)}</select></td>
+ <td class="r"><input type="number" step="0.01" style="width:58px" value="${it.q}" oninput="itQ(${i},this.value)" title="${it.auto?'Calculado pelas medidas':'Manual'}">${it.auto?'<div class="pill">auto</div>':''}</td>
+ <td>${s.u}</td><td class="r"><input type="number" step="0.5" style="width:58px" value="${it.pr}" oninput="cur.itens[${i}].pr=parseFloat(this.value)||0;save();rowTot(${i})"></td>
+ <td class="r" id="rt${i}" style="white-space:nowrap">${nf(it.q*it.pr)}</td><td><button class="btnX" onclick="cur.itens.splice(${i},1);save();renderItens();renderMats()">✕</button></td></tr>`}).join('')
+ :'<tr><td colspan="6" class="hint">Nenhum serviço ainda.</td></tr>';refreshTot()}
+function rowTot(i){$('rt'+i).textContent=nf(cur.itens[i].q*cur.itens[i].pr);renderMats()}
+function itQ(i,v){cur.itens[i].q=parseFloat(v)||0;cur.itens[i].auto=false;save();rowTot(i)}
+function itCom(i,v){const it=cur.itens[i];it.com=v;const s=svc(it.sid);it.auto=!!(v&&s&&s.base!=='un');if(it.auto)it.q=autoQtd(it);save();renderItens();renderMats()}
+function addItem(){const sid=$('addServ').value;const s=svc(sid);const com=cur.comodos[0]?.nome||'';const it={sid,com:s.base==='un'?com:com,q:1,pr:s.pr,auto:s.base!=='un'&&!!com};if(it.auto)it.q=autoQtd(it);cur.itens.push(it);save();renderItens();renderMats()}
+
+function setMat(m){cur.matModo=m;save();renderMats()}
+function materiais(o){const agg={};o.itens.forEach(it=>{const s=svc(it.sid);if(!s)return;for(const k in s.mat){agg[k]=(agg[k]||0)+s.mat[k]*it.q}});
+ return Object.entries(agg).filter(([k,q])=>q>0).map(([k,q])=>{const m=DB.mat[k]||{n:k,u:'',pr:0};const inteiro=['sc','un','L'].includes(m.u);const qq=inteiro?Math.ceil(q):+q.toFixed(2);return{k,n:m.n,u:m.u,q:qq,pr:m.pr,t:qq*m.pr}})}
+function renderMats(){const inc=cur.matModo==='incluso';$('matCli').classList.toggle('on',!inc);$('matInc').classList.toggle('on',inc);
+ document.querySelectorAll('.matp').forEach(e=>e.classList.toggle('hide',!inc));const M=materiais(cur);
+ $('mats').innerHTML=M.length?M.map(m=>`<tr><td>${esc(m.n)}</td><td class="r">${nf(m.q)}</td><td>${m.u}</td>${inc?`<td class="r">${brl(m.pr)}</td><td class="r">${brl(m.t)}</td>`:''}</tr>`).join(''):'<tr><td colspan="5" class="hint">Aparece quando houver serviços.</td></tr>';refreshTot()}
+
+function calc(o){const mo=o.itens.reduce((a,it)=>a+it.q*it.pr,0);const e=o.extras;
+ const extras=(e.ajudanteDias*e.ajudanteValor)+(e.almocoDias*e.almocoValor)+(e.cacambaQtd*e.cacambaValor);
+ const mat=o.matModo==='incluso'?materiais(o).reduce((a,m)=>a+m.t,0):0;const sub=mo+extras+mat;const marg=sub*(e.margem||0)/100;
+ return{mo,extras,mat,marg,total:sub+marg}}
+function refreshTot(){if(!cur)return;const c=calc(cur);$('tot').textContent=brl(c.total);
+ $('totDet').textContent=`Mão de obra ${brl(c.mo)}${c.mat?' · Material '+brl(c.mat):''}${c.extras?' · Extras '+brl(c.extras):''}${c.marg?' · Margem '+brl(c.marg):''}`;
+ $('stBadge').className='st '+cur.status;$('stBadge').textContent=ST[cur.status]}
+
+/* ================= CROQUI ================= */
+function croquiSVG(comodos,W=640){const rs=comodos.filter(c=>c.l>0&&c.c>0);if(!rs.length)return'';
+ const maxRow=Math.max(10,...rs.map(c=>c.l));let x=0,y=0,rowH=0;const pos=[];
+ rs.forEach(c=>{const w=c.l,h=c.plano?0.6:c.c;if(x+w>maxRow&&x>0){x=0;y+=rowH+1.2;rowH=0}pos.push({c,x,y,w,h});x+=w+1.2;rowH=Math.max(rowH,h)});
+ const totW=Math.max(...pos.map(p=>p.x+p.w)),totH=y+rowH;const pad=1.2;const s=Math.min(W/(totW+pad*2),48);const H=(totH+pad*2)*s;
+ let g=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${(totW+pad*2)*s} ${H}" width="100%" style="max-width:${W}px;background:#fafbfc;border:1px solid #e5e7eb;border-radius:10px;font-family:system-ui,Arial">`;
+ g+=`<defs><pattern id="gr" width="${s}" height="${s}" patternUnits="userSpaceOnUse"><path d="M ${s} 0 L 0 0 0 ${s}" fill="none" stroke="#eef0f4" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#gr)"/>`;
+ pos.forEach(p=>{const X=(p.x+pad)*s,Y=(p.y+pad)*s,w=p.w*s,h=p.h*s;const fs=Math.max(9,Math.min(14,w/8));
+  if(p.c.plano){g+=`<rect x="${X}" y="${Y}" width="${w}" height="${h}" fill="#d9d2c5" stroke="#1c1c1e" stroke-width="2"/>`;
+   g+=`<text x="${X+w/2}" y="${Y-6}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#1c1c1e">${esc(p.c.nome)} · ${nf(p.c.l)} × ${nf(p.c.c)} m (alt.)</text>`;return}
+  g+=`<rect x="${X}" y="${Y}" width="${w}" height="${h}" fill="#fff" stroke="#1c1c1e" stroke-width="3"/>`;
+  g+=`<text x="${X+w/2}" y="${Y+h/2-2}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#1c1c1e">${esc(p.c.nome)}</text>`;
+  g+=`<text x="${X+w/2}" y="${Y+h/2+fs}" text-anchor="middle" font-size="${fs*.8}" fill="#6b7280">${nf(p.c.l*p.c.c)} m²</text>`;
+  g+=`<text x="${X+w/2}" y="${Y-5}" text-anchor="middle" font-size="${Math.max(8,fs*.75)}" fill="#c0392b">${nf(p.c.l)} m</text>`;
+  g+=`<text x="${X-5}" y="${Y+h/2}" text-anchor="middle" font-size="${Math.max(8,fs*.75)}" fill="#c0392b" transform="rotate(-90 ${X-5} ${Y+h/2})">${nf(p.c.c)} m</text>`});
+ return g+'</svg>'}
+function renderCroqui(){const svg=croquiSVG(cur.comodos);$('croquiBox').innerHTML=svg?svg+'<p class="hint">Croqui ilustrativo, sem escala de projeto.</p>':''}
+
+/* ================= VOZ ================= */
+let rec=null,recOn=false,mediaRec=null,chunks=[],recT=null,recStart=0,aCtx=null,raf=null,IA_ST='?';
+async function checaIA(){if(!iaOn()){IA_ST='off';return pintaIA()}
+ try{const r=await fetch(IA_URL+'?acao=ping',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});const j=await r.json().catch(()=>({}));
+  IA_ST=r.status===403?'origem':(j.ok&&j.chave?'ok':(j.ok?'semchave':'erro'))}catch(e){IA_ST='rede'}pintaIA()}
+function pintaIA(){const c=$('iaChip');if(!c)return;const m={ok:['ok','🟢 IA ativa'],off:['off','⚪ Modo offline'],origem:['off','⚪ Offline (abra pelo link)'],semchave:['err','🔴 IA sem chave'],erro:['err','🔴 IA com erro'],rede:['off','⚪ Sem internet'],'?':['off','⚪ verificando…']}[IA_ST];
+ c.className='iachip '+m[0];c.textContent=m[1];
+ if($('iaHint'))$('iaHint').textContent=IA_ST==='ok'?'IA ativa: pode falar do seu jeito, o app entende.':'Modo offline: fale cômodo, medidas e serviços. Ex.: “sala de 4 por 5, pintar parede”.'}
+const iaPronta=()=>IA_ST==='ok';
+function tempo(){const s=Math.floor((Date.now()-recStart)/1000);$('recTime').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(iaPronta()&&s>=170){toast('Limite de 3 minutos');stopMic()}}
+function medidor(st){try{aCtx=new (window.AudioContext||window.webkitAudioContext)();const an=aCtx.createAnalyser();an.fftSize=512;aCtx.createMediaStreamSource(st).connect(an);const d=new Uint8Array(an.fftSize);
+ const loop=()=>{an.getByteTimeDomainData(d);let m=0;for(const v of d)m=Math.max(m,Math.abs(v-128));$('recLvl').style.width=Math.min(100,m/60*100)+'%';raf=requestAnimationFrame(loop)};loop()}catch(e){}}
+function micUI(on,modo){recOn=on;$('micBtn').classList.toggle('on',on);$('micTxt').textContent=on?'⏹ Toque para terminar':'Toque e fale o serviço';$('recPanel').classList.toggle('hide',!on);
+ if(on){recStart=Date.now();$('recTime').textContent='00:00';recT=setInterval(tempo,500);$('recTit').textContent=modo==='ia'?'Gravando (IA)':'Ouvindo';$('recLive').textContent=modo==='ia'?'Gravando o áudio… a IA escreve quando você terminar.':'Pode falar…';$('recLvl').style.width='0'}
+ else{clearInterval(recT);cancelAnimationFrame(raf);if(aCtx){aCtx.close().catch(()=>{});aCtx=null}}}
+const ERR_VOZ={'not-allowed':'Microfone bloqueado. Toque no cadeado ao lado do endereço e permita o microfone.','service-not-allowed':'O navegador bloqueou o reconhecimento de voz. Abra o link no Chrome.','network':'O reconhecimento de voz do Chrome precisa de internet.','audio-capture':'Nenhum microfone encontrado.','no-speech':'Não ouvi nada. Fale mais perto do celular.','language-not-supported':'Português não disponível neste navegador.'};
+async function toggleMic(){if(recOn){stopMic();return}
+ if(!window.isSecureContext){toast('Abra o app pelo link https (GitHub Pages) para usar o microfone.');return}
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(iaPronta()&&navigator.mediaDevices&&window.MediaRecorder){let st;try{st=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){toast(ERR_VOZ['not-allowed']);return}
+  mediaRec=new MediaRecorder(st);chunks=[];mediaRec.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+  mediaRec.onstop=()=>{st.getTracks().forEach(t=>t.stop());const bl=new Blob(chunks,{type:mediaRec.mimeType||'audio/webm'});if(bl.size<2000){toast('Áudio muito curto');return}transcreverGroq(bl)};
+  mediaRec.start(1000);micUI(true,'ia');medidor(st);return}
+ if(SR){rec=new SR();rec.lang='pt-BR';rec.continuous=true;rec.interimResults=true;const base=$('fala').value?$('fala').value.trim()+' ':'';let fin='',ouviu=false;
+  rec.onresult=e=>{ouviu=true;let tmp='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=t+' ';else tmp+=t}$('fala').value=base+fin+tmp;$('recLive').textContent=(fin+tmp).trim()||'Pode falar…';$('recLvl').style.width=(40+Math.random()*50)+'%'};
+  rec.onspeechstart=()=>{$('recLvl').style.width='60%'};
+  rec.onend=()=>{if(recOn){try{rec.start()}catch(e){stopMic()}}};
+  rec.onerror=e=>{if(e.error==='no-speech'||e.error==='aborted')return;toast(ERR_VOZ[e.error]||('Erro no microfone: '+e.error));stopMic()};
+  try{rec.start();micUI(true,'voz')}catch(e){toast('Não consegui ligar o microfone')}return}
+ toast('Este navegador não reconhece voz. Abra no Chrome ou digite o texto.')}
+function stopMic(){const eraIA=!!(mediaRec&&mediaRec.state!=='inactive');recOn=false;if(rec){rec.onend=null;try{rec.stop()}catch(e){}rec=null}if(eraIA)mediaRec.stop();micUI(false);
+ if(!eraIA){upd('fala',$('fala').value);if($('fala').value.trim())toast('Pronto! Agora toque em “Montar orçamento”.')}}
+async function diagnostico(){const L=$('diagRes');L.innerHTML='<li>Testando…</li>';const it=[];const add=(ok,t,d)=>it.push(`<li>${ok===true?'✅':ok===false?'❌':'⚠️'} ${t}${d?'<small>'+d+'</small>':''}</li>`);
+ add(window.isSecureContext,'Endereço seguro (https)',window.isSecureContext?'':'Abra pelo link do GitHub Pages, não pelo arquivo baixado.');
+ const SR=!!(window.SpeechRecognition||window.webkitSpeechRecognition);add(SR?true:null,'Reconhecimento de voz do navegador',SR?'':'Este navegador não tem. Use o Chrome (ou a IA, se estiver ativa).');
+ if(/FBAN|FBAV|Instagram|WhatsApp/i.test(navigator.userAgent))add(null,'Aberto dentro do Facebook/Instagram/WhatsApp','O microfone pode não funcionar aqui. Toque em ⋮ e escolha “Abrir no Chrome”.');
+ let micOk=false;try{const st=await navigator.mediaDevices.getUserMedia({audio:true});st.getTracks().forEach(t=>t.stop());micOk=true}catch(e){}
+ add(micOk,'Permissão do microfone',micOk?'':'Toque no cadeado ao lado do endereço → Permissões → Microfone → Permitir.');
+ await checaIA();const ia={ok:[true,'IA no servidor','Funcionando: entende fala solta e transcreve o áudio.'],off:[null,'IA no servidor','Não configurada neste app. O modo offline funciona normalmente.'],origem:[null,'IA no servidor','Só funciona quando o app é aberto pelo link oficial (fosterfcs.github.io).'],semchave:[false,'IA no servidor','Servidor encontrado, mas falta cadastrar a GROQ_API_KEY nos Secrets do Supabase.'],erro:[false,'IA no servidor','O servidor respondeu com erro.'],rede:[false,'IA no servidor','Sem conexão com o servidor. Verifique a internet.']}[IA_ST];
+ add(...ia);L.innerHTML=it.join('')}
+async function transcreverGroq(blob){toast('A IA está escrevendo o que você falou…');try{const fd=new FormData();fd.append('file',blob,'audio.webm'); const j=await ia('transcrever',fd,true);
+ if(!j.text){toast('Não entendi o áudio, tente de novo');return}$('fala').value=(($('fala').value||'')+' '+j.text).trim();upd('fala',$('fala').value);toast('Pronto! Confira o texto e toque em “Montar orçamento”.')}catch(e){toast('Falha na transcrição. Tente de novo ou digite.')}}
+
+/* ================= INTERPRETAÇÃO (offline) ================= */
+const NUMW={um:1,uma:1,dois:2,duas:2,'três':3,tres:3,quatro:4,cinco:5,seis:6,sete:7,oito:8,nove:9,dez:10,onze:11,doze:12,quinze:15,vinte:20,trinta:30};
+function normaliza(t){t=' '+t.toLowerCase().replace(/metros? quadrados?|m2/g,'m²')+' ';
+ for(const w in NUMW)t=t.replace(new RegExp('(?<=[\\s,.])'+w+'(?=[\\s,.])','g'),NUMW[w]);
+ t=t.replace(/(\d+)\s+e\s+meio/g,(m,a)=>a+',5').replace(/(\d+)\s*(?:metros?|m)\s+e\s+(\d{1,2})(?!\d)/g,(m,a,b)=>a+','+b.padStart(2,'0')).replace(/\bmeio\b/g,'0,5');
+ return t}
+const num=s=>parseFloat(String(s).replace(',','.'));
+function interpretarLocal(texto){const t=normaliza(texto);const segs=[];let m;const re=new RegExp(ROOM_RE.source,'g');const hits=[];
+ while((m=re.exec(t))){let i=m.index;const prev=hits.length?hits[hits.length-1].i+hits[hits.length-1].len:0;
+  const pre=t.slice(prev,i);const cut=Math.max(pre.lastIndexOf('.'),pre.lastIndexOf(','),pre.lastIndexOf(';'));
+  // traz o verbo dito antes do cômodo ("pintar sala...") para dentro do cômodo
+  const resto=pre.slice(cut+1);if(/\b(pint|reboc|chapisc|assent|troc|revis|emass|demol|quebr|coloc|instal)\w*/.test(resto)&&!/\d/.test(resto))i=prev+cut+1;
+  hits.push({i,w:m[1],len:m.index-i+m[1].length})}
+ if(!hits.length||hits[0].i>0)segs.push({nome:'',txt:t.slice(0,hits.length?hits[0].i:t.length)});
+ hits.forEach((h,k)=>segs.push({nome:h.w,txt:t.slice(h.i,k+1<hits.length?hits[k+1].i:t.length)}));
+ const comodos=[],itens=[],cnt={};
+ segs.forEach(sg=>{let nome='';if(sg.nome){const base=sg.nome.replace(/^./,c=>c.toUpperCase());cnt[base]=(cnt[base]||0)+1;nome=base;
+   const d=sg.txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros?)?\s*(?:por|x|×)\s*(\d+(?:[.,]\d+)?)/);const pd=sg.txt.match(/p[eé][\s-]?direito\s*(?:de)?\s*(\d+(?:[.,]\d+)?)/);
+   const plano=/muro|fachada/.test(sg.nome);const area=sg.txt.match(/(\d+(?:[.,]\d+)?)\s*m²/);
+   const c={nome,l:d?num(d[1]):(area&&!plano?+Math.sqrt(num(area[1])).toFixed(2):0),c:d?num(d[2]):(area&&!plano?+Math.sqrt(num(area[1])).toFixed(2):0),pd:pd?num(pd[1]):DB.perfil.pd};if(plano)c.plano=true;comodos.push(c)}
+  const usados=new Set();
+  const KWALL=KW.concat(DB.serv.map(x=>[x.id,(x.kw||'').split(',').map(w=>w.trim().toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).filter(Boolean)]).filter(x=>x[1].length).map(x=>[x[0],new RegExp(x[1].join('|'))]));
+  KWALL.forEach(([sid,rx])=>{const r2=new RegExp(rx.source,'g');let mm;while((mm=r2.exec(sg.txt))){
+   if(sid==='pint_parede'&&/teto/.test(sg.txt)&&!/parede|tudo|geral|completa|parede e teto|teto e parede/.test(sg.txt))break;
+   if(usados.has(sid))break;const s=svc(sid);if(!s||!DB.perfil.profs.includes(s.p))break;
+   const antes=sg.txt.slice(Math.max(0,mm.index-28),mm.index);
+   if(sid==='piso'&&/(demol\w*|quebr\w*|tir\w*|arranc\w*)\s+(o\s+)?$/.test(antes))continue;
+   usados.add(sid);
+   let q=1,auto=false;const nUn=antes.match(/(\d+)\s*(?:pontos?\s+de\s+)?$/);const nM2=antes.match(s.base==='perimetro'?/(\d+(?:[.,]\d+)?)\s*(?:m²|metros?|m)\s*(?:de\s+)?$/:/(\d+(?:[.,]\d+)?)\s*m²\s*(?:de\s+)?$/);
+   if((sid==='tomada'||sid==='luz')&&(usados.has('rev_tomada')||usados.has('rev_luz'))&&/(revis|troc|consert|manuten)\w*\s+(?:d[aeo]s?\s+)?(?:\d+\s+)?(?:pontos?\s+de\s+)?$/.test(antes)){usados.delete(sid);continue}
+   const nIn=mm[0].match(/(\d+)/);
+   if(s.base==='un'){const nQ=antes.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|m³|metros?|m|unidades?|pe[cç]as?|pontos?\s+de)?\s*(?:de\s+)?$/);q=sid.startsWith('rev_')?(nIn?parseInt(nIn[1]):1):(s.u!=='un'&&nQ?num(nQ[1]):(nUn?parseInt(nUn[1]):1))}
+   else if(nM2){q=num(nM2[1])}
+   else if(nome){auto=true}
+   else if(s.base==='m2'){q=1}
+   itens.push({sid,com:nome,q,pr:s.pr,auto})}});
+ });
+ // pintura "tudo": se pintar e não especificou, inclui teto também quando citar "teto"
+ return{comodos,itens}}
+
+/* ================= INTERPRETAÇÃO (Groq) ================= */
+async function interpretarGroq(texto){const cat=DB.serv.filter(s=>DB.perfil.profs.includes(s.p)).map(s=>`${s.id}: ${s.n} (${s.u}, base=${s.base})`).join('\n');
+ const sys=`Você converte a fala de um profissional da construção em JSON de orçamento. Catálogo de serviços (use só estes ids):\n${cat}\n
+Responda apenas JSON: {"comodos":[{"nome":"Quarto","l":3,"c":4,"pd":2.8,"plano":false}],"itens":[{"sid":"pint_parede","com":"Quarto","q":null}]}
+Regras: medidas em metros; "3 por 4" => l=3,c=4. Muro/fachada => plano=true, l=comprimento, c=altura. pd padrão ${DB.perfil.pd}.
+Para serviços base=un, q é a quantidade falada (padrão 1). Para m², q=null quando o cômodo tem medidas (o app calcula); se o profissional disse a área, use-a. Cômodos repetidos: "Quarto 1","Quarto 2". Itens sem cômodo: com="".`;
+ const d=await ia('interpretar',{system:sys,texto});
+ const comodos=(d.comodos||[]).map(c=>({nome:String(c.nome||'Cômodo'),l:+c.l||0,c:+c.c||0,pd:+c.pd||DB.perfil.pd,...(c.plano?{plano:true}:{})}));
+ const itens=(d.itens||[]).filter(i=>svc(i.sid)).map(i=>{const s=svc(i.sid);const auto=(i.q==null)&&s.base!=='un'&&!!i.com;return{sid:i.sid,com:i.com||'',q:auto?0:(+i.q||1),pr:s.pr,auto}});
+ return{comodos,itens}}
+
+async function interpretar(){const texto=$('fala').value.trim();if(!texto){toast('Fale ou digite o serviço primeiro');return}upd('fala',texto);
+ if((cur.comodos.length||cur.itens.length)&&!confirm('Substituir cômodos e serviços pelo que foi falado?'))return;
+ let r=null;if(iaPronta()){toast('Interpretando com IA…');try{r=await interpretarGroq(texto)}catch(e){toast('IA indisponível, usando modo offline')}}
+ if(!r)r=interpretarLocal(texto);
+ cur.comodos=r.comodos;cur.itens=r.itens;recalcAuto();
+ // sugestões automáticas de extras
+ const m2=cur.itens.filter(i=>svc(i.sid).u==='m²').reduce((a,i)=>a+i.q,0);const dias=Math.max(1,Math.ceil(m2/25));
+ if(!cur.extras.almocoDias)cur.extras.almocoDias=dias;if(!cur.prazo)cur.prazo=dias;
+ if(cur.itens.some(i=>i.sid==='demol_piso')&&!cur.extras.cacambaQtd)cur.extras.cacambaQtd=1;
+ save();renderEditor();toast(`${r.comodos.length} cômodo(s), ${r.itens.length} serviço(s)`)}
+function exemplo(){$('fala').value='Quarto de 3 por 4, pintar parede e teto, assentar piso e 2 tomadas. Sala de 4 por 5 e meio, massa corrida e pintar parede, 2 pontos de luz. Banheiro de 2 por 1 e meio, quebrar o piso, azulejo na parede, ponto de água e instalar vaso.'}
+
+/* ================= PROPOSTA / PDF ================= */
+function propostaHTML(o,p){const c=calc(o);const M=materiais(o);const inc=o.matModo==='incluso';const dt=new Date(o.data).toLocaleDateString('pt-BR');
+ const grupos={};o.itens.forEach(it=>{const k=it.com||'Geral';(grupos[k]=grupos[k]||[]).push(it)});
+ const e=o.extras;const ex=[];if(e.ajudanteDias)ex.push(['Ajudante',`${e.ajudanteDias} diária(s)`,e.ajudanteDias*e.ajudanteValor]);if(e.almocoDias)ex.push(['Alimentação e transporte',`${e.almocoDias} dia(s)`,e.almocoDias*e.almocoValor]);if(e.cacambaQtd)ex.push(['Caçamba de entulho',`${e.cacambaQtd} un`,e.cacambaQtd*e.cacambaValor]);
+ return`<div class="prop"><div class="ph"><div><div style="font-size:18px;font-weight:800;color:var(--navy)">${esc(p.nome||'Seu nome / empresa')}</div><div>${esc(p.tel||'')}${p.doc?' · '+esc(p.doc):''}${p.cidade?' · '+esc(p.cidade):''}</div></div>
+ <div style="text-align:right"><div style="font-weight:800">ORÇAMENTO Nº ${o.num}</div><div>${dt}</div><div>Válido por ${o.validade||15} dias</div></div></div>
+ <div><b>Cliente:</b> ${esc(o.cliente.nome||'—')}${o.cliente.tel?' · '+esc(o.cliente.tel):''}<br><b>Local:</b> ${esc(o.cliente.end||'—')}</div>
+ ${o.comodos.some(x=>x.l&&x.c)?`<h3>Croqui dos ambientes</h3>${croquiSVG(o.comodos,560)}`:''}
+ <h3>Serviços</h3><table><tr><th>Descrição</th><th style="text-align:right">Qtd</th><th>Un</th><th style="text-align:right">Valor un.</th><th style="text-align:right">Total</th></tr>
+ ${Object.entries(grupos).map(([g,its])=>`<tr><td colspan="5" style="background:#f4f5f7;font-weight:700">${esc(g)}</td></tr>`+its.map(it=>{const s=svc(it.sid)||{n:it.sid,u:''};return`<tr><td>${esc(s.n)}</td><td style="text-align:right">${nf(it.q)}</td><td>${s.u}</td><td style="text-align:right">${brl(it.pr)}</td><td style="text-align:right">${brl(it.q*it.pr)}</td></tr>`}).join('')).join('')}
+ ${ex.map(x=>`<tr><td>${x[0]}</td><td style="text-align:right" colspan="2">${x[1]}</td><td></td><td style="text-align:right">${brl(x[2])}</td></tr>`).join('')}
+ </table>
+ ${M.length?`<h3>Materiais ${inc?'(inclusos no valor)':'(por conta do cliente)'}</h3><table><tr><th>Material</th><th style="text-align:right">Qtd</th><th>Un</th>${inc?'<th style="text-align:right">Total</th>':''}</tr>${M.map(m=>`<tr><td>${esc(m.n)}</td><td style="text-align:right">${nf(m.q)}</td><td>${m.u}</td>${inc?`<td style="text-align:right">${brl(m.t)}</td>`:''}</tr>`).join('')}</table>`:''}
+ <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px;background:#f3f4f6;border-left:5px solid var(--red);border-radius:8px"><div>${c.marg?`<div style="font-size:11px;color:#666">Inclui reserva técnica para imprevistos</div>`:''}<b>VALOR TOTAL</b></div><div class="big">${brl(c.total)}</div></div>
+ <h3>Condições</h3><div>Prazo estimado: <b>${o.prazo||'—'} dia(s) úteis</b><br>Pagamento: ${esc(o.pagamento||'—')}${o.obs?'<br>Obs.: '+esc(o.obs):''}<br><span style="color:#666;font-size:11px">Serviços não listados serão orçados à parte. Medidas sujeitas a conferência no local.</span></div>
+ <div class="assin"><div>${esc(p.nome||'Profissional')}</div><div>${esc(o.cliente.nome||'Cliente')} — De acordo</div></div>
+ <div style="text-align:center;font-size:9px;color:#999;margin-top:14px">Gerado com Foster Orça · Foster Tech Soluções</div></div>`}
+function verProposta(){$('propBox').innerHTML=propostaHTML(cur,DB.perfil);show('prop')}
+async function gerarPDF(){if(!window.html2pdf){toast('Sem internet para gerar PDF; use Ver → imprimir');return}toast('Gerando PDF…');
+ const el=document.createElement('div');el.innerHTML=propostaHTML(cur,DB.perfil);el.style.width='760px';
+ const nome=`Orcamento_${cur.num}_${(cur.cliente.nome||'cliente').replace(/\W+/g,'_')}.pdf`;
+ const blob=await html2pdf().set({margin:[8,6,8,6],filename:nome,image:{type:'jpeg',quality:.95},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4'},pagebreak:{mode:['css','legacy']}}).from(el).outputPdf('blob');
+ const f=new File([blob],nome,{type:'application/pdf'});
+ if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Orçamento '+cur.num});return}catch(e){if(e.name==='AbortError')return}}
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nome;a.click()}
+
+/* ================= LINK DE APROVAÇÃO (sem servidor) ================= */
+async function pack(obj){const s=JSON.stringify(obj);try{if(window.CompressionStream){const cs=new Blob([s]).stream().pipeThrough(new CompressionStream('deflate-raw'));const buf=new Uint8Array(await new Response(cs).arrayBuffer());let b='';buf.forEach(x=>b+=String.fromCharCode(x));return'z'+btoa(b).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}}catch(e){}
+ return'b'+btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+async function unpack(str){const t=str[0],b=atob(str.slice(1).replace(/-/g,'+').replace(/_/g,'/'));if(t==='b')return JSON.parse(decodeURIComponent(escape(b)));
+ const u=Uint8Array.from(b,c=>c.charCodeAt(0));const ds=new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw'));return JSON.parse(await new Response(ds).text())}
+async function enviarAprovacao(){if(!DB.perfil.tel){toast('Coloque seu WhatsApp no Perfil primeiro');show('perfil');return}
+ const usados=new Set(cur.itens.map(i=>i.sid));const pay={o:cur,p:{nome:DB.perfil.nome,tel:DB.perfil.tel,doc:DB.perfil.doc,cidade:DB.perfil.cidade},s:DB.serv.filter(s=>usados.has(s.id)),m:DB.mat};
+ const link=location.href.split('#')[0]+'#v='+await pack(pay);const tot=brl(calc(cur).total);
+ const msg=`Olá${cur.cliente.nome?' '+cur.cliente.nome.split(' ')[0]:''}! Segue o orçamento nº ${cur.num} (${tot}). Abra para ver os detalhes e aprovar:\n${link}`;
+ const tel=(cur.cliente.tel||'').replace(/\D/g,'');cur.status=cur.status==='apr'?'apr':'env';save();refreshTot();
+ window.open('https://wa.me/'+(tel?(tel.length<=11?'55'+tel:tel):'')+'?text='+encodeURIComponent(msg),'_blank')}
+async function abrirCliente(){try{const d=await unpack(location.hash.slice(3));DB={...DB,serv:d.s.concat(DB.serv.filter(s=>!d.s.find(x=>x.id===s.id))),mat:d.m};window._cli=d;
+ $('appView').classList.add('hide');$('clientView').classList.remove('hide');$('clientProp').innerHTML=propostaHTML(d.o,d.p);document.title='Orçamento nº '+d.o.num}
+ catch(e){alert('Link de orçamento inválido');location.hash=''}}
+function clientReply(ok){const d=window._cli;const tel=(d.p.tel||'').replace(/\D/g,'');const tot=brl(calc(d.o).total);
+ const msg=ok?`✅ APROVADO: orçamento nº ${d.o.num} no valor de ${tot}. ${d.o.cliente.nome||''}`:`Olá! Sobre o orçamento nº ${d.o.num}, gostaria de ajustar: `;
+ window.open('https://wa.me/'+(tel.length<=11?'55'+tel:tel)+'?text='+encodeURIComponent(msg),'_blank')}
+
+/* ================= TABELA / PERFIL ================= */
+const BASES={piso:'Área do piso (L × C)',parede:'Área das paredes (perímetro × pé-direito)',teto:'Área do teto (L × C)',perimetro:'Perímetro do cômodo (rodapé, sanca)',un:'Quantidade que eu informar'};
+const UNS=['m²','m','m³','un','vb','dia','h','kg'];
+function renderTabela(){const P=profs();$('profChips').innerHTML=Object.entries(P).map(([k,n])=>`<button class="chip ${DB.perfil.profs.includes(k)?'on':''}" onclick="togProf('${k}')">${esc(n)}</button>`).join('');
+ const q=($('buscaServ').value||'').toLowerCase();
+ $('tabServ').innerHTML=Object.entries(P).filter(([k])=>DB.perfil.profs.includes(k)).map(([k,n])=>{const L=DB.serv.filter(s=>s.p===k&&(!q||s.n.toLowerCase().includes(q)));if(!L.length)return'';
+ return`<details open><summary>${esc(n)} <span class="pill">${L.length}</span></summary><table class="tbl">${L.map(s=>`<tr><td>${esc(s.n)}${s.custom?'<span class="tag">meu</span>':''}<div class="hint" style="margin:0">${Object.entries(s.mat).map(([m,q])=>`${nf(q,3)} ${DB.mat[m]?.u||''} ${esc(DB.mat[m]?.n||m)}`).join(' · ')||'sem material'}</div></td><td>${s.u}</td><td class="r"><input type="number" step="0.5" style="width:74px" value="${s.pr}" oninput="svc('${s.id}').pr=parseFloat(this.value)||0;save()"></td><td><button class="ib" onclick="formServ('${s.id}')">✏️</button></td></tr>`).join('')}</table></details>`}).join('')||'<p class="hint">Nenhum serviço encontrado.</p>';
+ $('tabMat').innerHTML=`<table class="tbl">${Object.entries(DB.mat).map(([k,m])=>`<tr><td>${esc(m.n)}${m.custom?'<span class="tag">meu</span>':''}</td><td>${m.u}</td><td class="r"><input type="number" step="0.1" style="width:74px" value="${m.pr}" oninput="DB.mat['${k}'].pr=parseFloat(this.value)||0;save()"></td><td><button class="ib" onclick="formMat('${k}')">✏️</button></td></tr>`).join('')}</table>`}
+function abrirModal(h){$('sheet').innerHTML=h;$('modal').classList.remove('hide')}
+function fecharModal(){$('modal').classList.add('hide')}
+let fsMats=[],fsDoOrc=false;
+function formServ(id,doOrc){fsDoOrc=!!doOrc;const s=id?svc(id):{id:'',p:DB.perfil.profs[0]||'pedreiro',n:'',u:'m²',base:'piso',pr:0,mat:{},kw:''};
+ fsMats=Object.entries(s.mat).map(([k,q])=>({k,q}));const P=profs();
+ abrirModal(`<h3>${id?'Editar serviço':'Incluir serviço'}</h3><p class="hint" style="margin-top:0">${fsDoOrc?'Ele vai para este orçamento e fica salvo na sua Tabela.':'Fica salvo na sua Tabela para os próximos orçamentos.'}</p>
+ <input type="hidden" id="fsId" value="${s.id}">
+ <label>Profissão</label><select id="fsP" onchange="$('fsNovaP').classList.toggle('hide',this.value!=='__nova')">${Object.entries(P).map(([k,n])=>`<option value="${k}" ${k===s.p?'selected':''}>${esc(n)}</option>`).join('')}<option value="__nova">＋ Nova profissão…</option></select>
+ <input id="fsNovaP" class="hide" placeholder="Ex.: Serralheiro, Telhadista, Marceneiro" style="margin-top:6px">
+ <label>Nome do serviço</label><input id="fsN" value="${esc(s.n)}" placeholder="Ex.: Troca de telha">
+ <div class="row"><div><label>Unidade</label><select id="fsU">${UNS.map(u=>`<option ${u===s.u?'selected':''}>${u}</option>`).join('')}</select></div>
+ <div><label>Preço (R$ por unidade)</label><input id="fsPr" type="number" step="0.5" value="${s.pr||''}"></div></div>
+ <label>Como calcular a quantidade</label><select id="fsB">${Object.entries(BASES).map(([k,v])=>`<option value="${k}" ${(s.base==='m2'?'un':s.base)===k?'selected':''}>${v}</option>`).join('')}</select>
+ <label>Palavras que você fala para este serviço</label><input id="fsKw" value="${esc(s.kw||'')}" placeholder="Ex.: telha, telhado, trocar telha">
+ <p class="hint">Separe por vírgula. Quando você falar uma delas, o app inclui este serviço.</p>
+ <label style="margin-top:12px">Material gasto por ${'<span id="fsUl">'+s.u+'</span>'} de serviço</label><div id="fsMats"></div>
+ <button class="btn2" style="width:100%" onclick="fsAddMat()">＋ Material</button>
+ <div class="btns" style="margin-top:16px">${id&&!fsDoOrc?`<button class="btnX" onclick="delServ('${id}')">Excluir</button>`:''}<span style="flex:1"></span><button class="btn2" onclick="fecharModal()">Cancelar</button><button class="btnA" onclick="salvarServ()">Salvar</button></div>`);
+ $('fsU').onchange=e=>$('fsUl').textContent=e.target.value;renderFsMats()}
+function renderFsMats(){$('fsMats').innerHTML=fsMats.map((m,i)=>`<div class="mrow"><select onchange="fsMats[${i}].k=this.value">${Object.entries(DB.mat).map(([k,x])=>`<option value="${k}" ${k===m.k?'selected':''}>${esc(x.n)} (${x.u})</option>`).join('')}</select>
+ <input type="number" step="0.001" value="${m.q}" placeholder="qtd" oninput="fsMats[${i}].q=parseFloat(this.value)||0"><button class="btnX" onclick="fsMats.splice(${i},1);renderFsMats()">✕</button></div>`).join('')||'<p class="hint">Sem material (só mão de obra).</p>'}
+function fsAddMat(){fsMats.push({k:Object.keys(DB.mat)[0],q:1});renderFsMats()}
+function slug(t){return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')}
+function salvarServ(){const n=$('fsN').value.trim();if(!n){toast('Dê um nome ao serviço');return}
+ let p=$('fsP').value;if(p==='__nova'){const nm=$('fsNovaP').value.trim();if(!nm){toast('Digite o nome da profissão');return}p='x_'+slug(nm);DB.perfil.profsExtra=DB.perfil.profsExtra||{};DB.perfil.profsExtra[p]=nm}
+ if(!DB.perfil.profs.includes(p))DB.perfil.profs.push(p);
+ const mat={};fsMats.forEach(m=>{if(m.q>0)mat[m.k]=(mat[m.k]||0)+m.q});
+ const data={p,n,u:$('fsU').value,base:$('fsB').value,pr:parseFloat($('fsPr').value)||0,kw:$('fsKw').value.trim(),mat};
+ let id=$('fsId').value;if(id){Object.assign(svc(id),data)}else{id='c_'+Date.now().toString(36);DB.serv.push({id,custom:true,...data})}
+ save();fecharModal();toast('Serviço salvo na Tabela');
+ if(fsDoOrc&&cur){const s=svc(id);const com=s.base==='un'?'':(cur.comodos[0]?.nome||'');const it={sid:id,com,q:1,pr:s.pr,auto:!!com};if(it.auto)it.q=autoQtd(it);cur.itens.push(it);save();renderEditor()}else renderTabela()}
+function delServ(id){if(cur&&DB.orcs.some(o=>o.itens.some(i=>i.sid===id))&&!confirm('Este serviço está em orçamentos salvos. Excluir mesmo assim?'))return;
+ if(!confirm('Excluir este serviço da Tabela?'))return;DB.serv=DB.serv.filter(s=>s.id!==id);save();fecharModal();renderTabela()}
+function formMat(k){const m=k?DB.mat[k]:{n:'',u:'un',pr:0};
+ abrirModal(`<h3>${k?'Editar material':'Incluir material'}</h3><input type="hidden" id="fmK" value="${k||''}">
+ <label>Nome do material</label><input id="fmN" value="${esc(m.n)}" placeholder="Ex.: Telha cerâmica">
+ <div class="row"><div><label>Unidade</label><select id="fmU">${['un','m²','m','m³','kg','sc','L','gl','lata','barra','pç','rolo','cx'].map(u=>`<option ${u===m.u?'selected':''}>${u}</option>`).join('')}</select></div>
+ <div><label>Preço (R$ por unidade)</label><input id="fmPr" type="number" step="0.1" value="${m.pr||''}"></div></div>
+ <div class="btns" style="margin-top:16px">${k?`<button class="btnX" onclick="delMat('${k}')">Excluir</button>`:''}<span style="flex:1"></span><button class="btn2" onclick="fecharModal()">Cancelar</button><button class="btnA" onclick="salvarMat()">Salvar</button></div>`)}
+function salvarMat(){const n=$('fmN').value.trim();if(!n){toast('Dê um nome ao material');return}let k=$('fmK').value;
+ const d={n,u:$('fmU').value,pr:parseFloat($('fmPr').value)||0};if(k)Object.assign(DB.mat[k],d);else{k='m_'+Date.now().toString(36);DB.mat[k]={...d,custom:true}}
+ save();fecharModal();toast('Material salvo');if(fsMats&&$('fsMats')){}renderTabela()}
+function delMat(k){const us=DB.serv.filter(s=>s.mat[k]).length;if(!confirm(us?`Este material é usado em ${us} serviço(s). Excluir e tirar desses serviços?`:'Excluir este material?'))return;
+ DB.serv.forEach(s=>delete s.mat[k]);delete DB.mat[k];save();fecharModal();renderTabela()}
+function togProf(k){const a=DB.perfil.profs;const i=a.indexOf(k);i>=0?a.splice(i,1):a.push(k);save();renderTabela()}
+function renderPerfil(){const p=DB.perfil;$('pNome').value=p.nome;$('pTel').value=p.tel;$('pDoc').value=p.doc;$('pCid').value=p.cidade;$('pPD').value=p.pd}
+function upP(k,v){DB.perfil[k]=v;save()}
+function exportar(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(DB)],{type:'application/json'}));a.download='foster-orca-copia-seguranca_'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Cópia salva em Downloads')}
+function exportarPlanilha(){if(!DB.orcs.length){toast('Nenhum orçamento para exportar');return}
+ const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const n=v=>(+v||0).toFixed(2).replace('.',',');
+ const linhas=[['Nº','Data','Cliente','WhatsApp','Endereço','Situação','Serviços','Mão de obra','Material','Extras','Margem','Total','Prazo (dias)'].map(q).join(';')];
+ DB.orcs.forEach(o=>{const c=calc(o);linhas.push([o.num,new Date(o.data).toLocaleDateString('pt-BR'),o.cliente.nome,o.cliente.tel,o.cliente.end,ST[o.status],
+  o.itens.map(it=>`${(svc(it.sid)||{n:it.sid}).n} ${nf(it.q)}${(svc(it.sid)||{u:''}).u}${it.com?' ('+it.com+')':''}`).join(' | ')].map(q).concat([n(c.mo),n(c.mat),n(c.extras),n(c.marg),n(c.total),q(o.prazo)]).join(';'))});
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+linhas.join('\r\n')],{type:'text/csv;charset=utf-8'}));
+ a.download='orcamentos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();toast('Planilha exportada')}
+function importar(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{let d;try{d=JSON.parse(t)}catch(e){toast('Arquivo inválido');return}if(!d||!d.perfil||!Array.isArray(d.orcs)){toast('Este arquivo não é uma cópia do Foster Orça');return}if(!confirm('Substituir os dados deste aparelho pela cópia ('+d.orcs.length+' orçamentos)?'))return;DB=d;cur=null;save();toast('Cópia restaurada');show('lista')})}
+
+/* ================= INÍCIO ================= */
+if(location.hash.startsWith('#v='))abrirCliente();else{show('lista');checaIA()}
+</script>
+</body>
+</html>
