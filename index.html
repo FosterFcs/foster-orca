@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#111214">
 <title>Foster Orça — Orçamento por Voz</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <style>
 :root{--navy:#1c1c1e;--amber:#d62828;--red:#d62828;--graf:#2b2d31;--cinza:#3d4047;--green:#1e8449;--bg:#eceef1;--card:#fff;--ink:#1d2433;--mute:#6b7280;--line:#e5e7eb;--r:14px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -125,6 +127,19 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
 .faq{background:#fff;border-radius:12px;padding:6px 14px;margin-bottom:8px}.faq summary{font-weight:700;padding:8px 0}.faq p{color:#4b5563;font-size:14.5px;padding-bottom:10px}
 .lp-final{background:linear-gradient(160deg,#d62828,#9b1c1c);color:#fff;text-align:center;padding:44px 20px}.lp-final h2{font-size:24px;margin-bottom:18px;font-weight:900}.lp-final .lp-btn{background:#fff;color:var(--red);box-shadow:none}.lp-final p{margin-top:16px;font-size:14px}.lp-final a{color:#fff;font-weight:700}
 .lp-foot{background:#111214;color:#9ca3af;text-align:center;font-size:12px;padding:18px}
+.auth{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:20px;background:linear-gradient(170deg,#111214,#2b2d31)}
+.auth-card{background:#fff;border-radius:18px;padding:22px 18px;max-width:420px;width:100%;margin:0 auto;border-top:5px solid var(--red)}
+.auth .lp-brand .logo{width:34px;height:34px}.auth>.hint{color:#9ca3af}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:#eef0f4;border-radius:12px;padding:4px;gap:4px}.auth-tabs button{background:transparent;padding:9px;font-size:14px;color:var(--mute)}.auth-tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.auth-msg{font-size:14px;margin-top:12px;text-align:center;min-height:1em}.auth-msg.err{color:var(--red)}.auth-msg.ok{color:var(--green)}
+.auth-links{display:flex;justify-content:space-between;margin-top:14px;font-size:13px}.auth-links a{color:var(--mute)}
+.planbox{border-radius:14px;padding:14px;background:#f4f5f7;border-left:5px solid #9ca3af}.planbox.pago{border-left-color:var(--green);background:#eefaf2}
+.planbox b{font-size:17px}.uso{height:8px;background:#e5e7eb;border-radius:6px;overflow:hidden;margin:8px 0 4px}.uso i{display:block;height:100%;background:var(--red)}
+.pixbox{text-align:center}.pixbox .qr{display:inline-block;padding:10px;background:#fff;border:2px solid #1c1c1e;border-radius:14px;margin:10px 0}.pixbox .qr svg,.pixbox .qr img{width:220px;height:220px;display:block}
+.cola{display:flex;gap:6px;margin:8px 0}.cola input{font-size:12px;font-family:monospace}
+.pv{font-size:28px;font-weight:900;color:var(--navy)}
+.adm-res{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}.adm-res div{background:#f4f5f7;border-radius:10px;padding:8px;text-align:center;font-size:11px;color:var(--mute)}.adm-res b{display:block;font-size:16px;color:var(--ink)}
+.pg{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}.pg.pendente{border-color:#e0a800;background:#fffbea}.pg .btns{margin-top:6px}
 .approve-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px;display:flex;gap:8px;box-shadow:0 -2px 10px rgba(0,0,0,.1)}
 .approve-bar button{flex:1;padding:15px}
 </style>
@@ -143,6 +158,26 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
 </div>
 
 <!-- ===== MODO PROFISSIONAL ===== -->
+<!-- ===== LOGIN ===== -->
+<div id="authView" class="hide">
+ <div class="auth">
+  <div class="auth-card">
+   <div class="lp-brand" style="justify-content:center;margin-bottom:6px"><div class="logo">FO</div><b style="color:var(--ink);font-size:20px">Foster Orça</b></div>
+   <p class="hint" style="text-align:center;margin:0 0 16px" id="authSub">Entre para salvar seus orçamentos na nuvem e usar em qualquer celular.</p>
+   <div class="auth-tabs" id="authTabs"><button class="on" onclick="authModo('entrar')">Entrar</button><button onclick="authModo('criar')">Criar conta grátis</button></div>
+   <form id="authForm" onsubmit="authEnviar(event)">
+    <div id="fNome" class="hide"><label>Seu nome ou empresa</label><input id="aNome" autocomplete="name"></div>
+    <div id="fEmail"><label>E-mail</label><input id="aEmail" type="email" autocomplete="email" required></div>
+    <div id="fSenha"><label id="lSenha">Senha</label><input id="aSenha" type="password" autocomplete="current-password" minlength="6"></div>
+    <button class="btnA" style="width:100%;margin-top:14px;padding:14px" id="aBtn">Entrar</button>
+   </form>
+   <p class="auth-msg" id="authMsg"></p>
+   <div class="auth-links"><a href="#" id="lEsqueci" onclick="authModo('esqueci');return false">Esqueci minha senha</a><a href="#" onclick="verLanding();return false">← Conhecer o app</a></div>
+  </div>
+  <p class="hint" style="text-align:center;margin-top:14px">Foster Tech Soluções · (24) 99209-6103</p>
+ </div>
+</div>
+
 <!-- ===== PÁGINA DE APRESENTAÇÃO ===== -->
 <div id="landing" class="hide">
 <div class="lp">
@@ -357,6 +392,9 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
 
 <!-- PERFIL -->
 <section id="tab-perfil" class="hide">
+  <div class="card conta"><div class="tabhead"><h2 style="margin:0">Minha conta</h2><button class="btn2" onclick="sair()">Sair</button></div>
+    <div class="hint" style="margin:0 0 10px" id="contaEmail"></div><div id="contaPlano"></div></div>
+  <div class="card hide" id="adminCard" style="border:2px solid var(--navy)"><div class="tabhead"><h2 style="margin:0">🔐 Painel do administrador</h2><button class="btn2" onclick="carregarAdmin()">↻</button></div><div id="adminBox"></div></div>
   <div class="card"><h2>Seus dados (saem no PDF)</h2>
     <label>Nome / Empresa</label><input id="pNome" oninput="upP('nome',this.value)">
     <div class="row"><div><label>WhatsApp (com DDD)</label><input id="pTel" inputmode="tel" oninput="upP('tel',this.value)"></div>
@@ -450,14 +488,15 @@ const ROOM_RE=/\b(quarto|sala|cozinha|banheiro|lavabo|varanda|garagem|corredor|l
    Cole aqui a URL da função depois de publicada. Vazio = modo offline (regras próprias). */
 const IA_URL='https://fvsdlpnvqfvjdxmfgbjx.supabase.co/functions/v1/orca-ia';
 const iaOn=()=>!!IA_URL;
-async function ia(acao,body,isForm){const r=await fetch(IA_URL+'?acao='+acao,{method:'POST',headers:isForm?{}:{'Content-Type':'application/json'},body:isForm?body:JSON.stringify(body)});if(!r.ok)throw new Error('ia '+r.status);return r.json()}
+async function ia(acao,body,isForm){const h=isForm?{}:{'Content-Type':'application/json'};if(SESSAO)h.Authorization='Bearer '+SESSAO.access_token;const r=await fetch(IA_URL+'?acao='+acao,{method:'POST',headers:h,body:isForm?body:JSON.stringify(body)});if(!r.ok)throw new Error('ia '+r.status);return r.json()}
 
 /* ================= ESTADO ================= */
-const KEY='fosterOrca_v1';
+const KEY='fosterOrca_v1';let LKEY=KEY;
 let DB=load();let cur=null;
-function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d){SERV0.forEach((x,i)=>{if(!d.serv.find(y=>y.id===x.id))d.serv.splice(Math.min(i,d.serv.length),0,JSON.parse(JSON.stringify(x)))});for(const k in MAT0)if(!d.mat[k])d.mat[k]={...MAT0[k]};return d}}catch(e){}
+function fixDB(d){if(!d||!d.perfil||!Array.isArray(d.serv))return null;SERV0.forEach((x,i)=>{if(!d.serv.find(y=>y.id===x.id))d.serv.splice(Math.min(i,d.serv.length),0,JSON.parse(JSON.stringify(x)))});d.mat=d.mat||{};for(const k in MAT0)if(!d.mat[k])d.mat[k]={...MAT0[k]};d.orcs=d.orcs||[];d.seq=d.seq||1;return d}
+function load(k){try{const d=JSON.parse(localStorage.getItem(k||KEY));if(d){SERV0.forEach((x,i)=>{if(!d.serv.find(y=>y.id===x.id))d.serv.splice(Math.min(i,d.serv.length),0,JSON.parse(JSON.stringify(x)))});for(const k in MAT0)if(!d.mat[k])d.mat[k]={...MAT0[k]};return d}}catch(e){}
  return{perfil:{nome:'',tel:'',doc:'',cidade:'',pd:2.8,profs:['pedreiro','pintor','eletricista','encanador']},serv:JSON.parse(JSON.stringify(SERV0)),mat:JSON.parse(JSON.stringify(MAT0)),orcs:[],seq:1}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+function save(){DB._ts=Date.now();try{localStorage.setItem(LKEY,JSON.stringify(DB))}catch(e){}agendaSync()}
 const $=id=>document.getElementById(id);
 const brl=v=>(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const nf=(v,d=2)=>(+v||0).toLocaleString('pt-BR',{maximumFractionDigits:d});
@@ -472,12 +511,12 @@ function show(t){if(t==='editor'&&!cur){novoOrc();return}
  if(t==='lista')renderLista();if(t==='tabela')renderTabela();if(t==='perfil')renderPerfil();if(t==='editor')renderEditor();window.scrollTo(0,0)}
 
 /* ================= ORÇAMENTOS ================= */
-function novoOrc(){cur={id:Date.now().toString(36),num:DB.seq++,data:new Date().toISOString(),status:'rasc',cliente:{nome:'',tel:'',end:''},fala:'',comodos:[],itens:[],
+async function novoOrc(){if(!(await podeCriar()))return;cur={id:Date.now().toString(36),num:DB.seq++,data:new Date().toISOString(),status:'rasc',cliente:{nome:'',tel:'',end:''},fala:'',comodos:[],itens:[],
  matModo:'cliente',extras:{ajudanteDias:0,ajudanteValor:150,almocoDias:0,almocoValor:30,cacambaQtd:0,cacambaValor:450,margem:10},prazo:'',validade:15,pagamento:'50% no início e 50% na entrega',obs:''};
  DB.orcs.unshift(cur);save();show('editor')}
 function abrir(id){cur=DB.orcs.find(o=>o.id===id);show('editor')}
 function apagar(id){if(!confirm('Apagar este orçamento?'))return;DB.orcs=DB.orcs.filter(o=>o.id!==id);if(cur&&cur.id===id)cur=null;save();renderLista()}
-function duplicar(id){const o=JSON.parse(JSON.stringify(DB.orcs.find(x=>x.id===id)));o.id=Date.now().toString(36);o.num=DB.seq++;o.status='rasc';o.data=new Date().toISOString();o.cliente={nome:'',tel:'',end:''};DB.orcs.unshift(o);save();abrir(o.id)}
+async function duplicar(id){if(!(await podeCriar()))return;const o=JSON.parse(JSON.stringify(DB.orcs.find(x=>x.id===id)));o.id=Date.now().toString(36);o.num=DB.seq++;o.status='rasc';o.data=new Date().toISOString();o.cliente={nome:'',tel:'',end:''};DB.orcs.unshift(o);save();abrir(o.id)}
 const ST={rasc:'Rascunho',env:'Enviado',apr:'Aprovado',rec:'Recusado'};let filtro='todos';
 function setFiltro(f){filtro=f;renderLista()}
 function setStatus(id,v){const o=DB.orcs.find(x=>x.id===id);o.status=v;save();renderLista()}
@@ -592,7 +631,7 @@ async function checaIA(){if(!iaOn()){IA_ST='off';return pintaIA()}
 function pintaIA(){const c=$('iaChip');if(!c)return;const m={ok:['ok','🟢 IA ativa'],off:['off','⚪ Modo offline'],origem:['off','⚪ Offline (abra pelo link)'],semchave:['err','🔴 IA sem chave'],erro:['err','🔴 IA com erro'],rede:['off','⚪ Sem internet'],'?':['off','⚪ verificando…']}[IA_ST];
  c.className='iachip '+m[0];c.textContent=m[1];
  if($('iaHint'))$('iaHint').textContent=IA_ST==='ok'?'IA ativa: pode falar do seu jeito, o app entende.':'Modo offline: fale cômodo, medidas e serviços. Ex.: “sala de 4 por 5, pintar parede”.'}
-const iaPronta=()=>IA_ST==='ok';
+const iaPronta=()=>IA_ST==='ok'&&pago();
 function tempo(){const s=Math.floor((Date.now()-recStart)/1000);$('recTime').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(iaPronta()&&s>=170){toast('Limite de 3 minutos');stopMic()}}
 function medidor(st){try{aCtx=new (window.AudioContext||window.webkitAudioContext)();const an=aCtx.createAnalyser();an.fftSize=512;aCtx.createMediaStreamSource(st).connect(an);const d=new Uint8Array(an.fftSize);
  const loop=()=>{an.getByteTimeDomainData(d);let m=0;for(const v of d)m=Math.max(m,Math.abs(v-128));$('recLvl').style.width=Math.min(100,m/60*100)+'%';raf=requestAnimationFrame(loop)};loop()}catch(e){}}
@@ -706,7 +745,7 @@ function propostaHTML(o,p){const c=calc(o);const M=materiais(o);const inc=o.matM
  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px;background:#f3f4f6;border-left:5px solid var(--red);border-radius:8px"><div>${c.marg?`<div style="font-size:11px;color:#666">Inclui reserva técnica para imprevistos</div>`:''}<b>VALOR TOTAL</b></div><div class="big">${brl(c.total)}</div></div>
  <h3>Condições</h3><div>Prazo estimado: <b>${o.prazo||'—'} dia(s) úteis</b><br>Pagamento: ${esc(o.pagamento||'—')}${o.obs?'<br>Obs.: '+esc(o.obs):''}<br><span style="color:#666;font-size:11px">Serviços não listados serão orçados à parte. Medidas sujeitas a conferência no local.</span></div>
  <div class="assin"><div>${esc(p.nome||'Profissional')}</div><div>${esc(o.cliente.nome||'Cliente')} — De acordo</div></div>
- <div style="text-align:center;font-size:9px;color:#999;margin-top:14px">Gerado com Foster Orça · Foster Tech Soluções</div></div>`}
+ ${o._pago||pago()?'':'<div style="text-align:center;font-size:11px;color:#d62828;margin-top:14px;border-top:1px dashed #ddd;padding-top:8px">Orçamento feito com <b>Foster Orça</b> · versão grátis · fosterfcs.github.io/foster-orca</div>'}</div>`}
 function verProposta(){$('propBox').innerHTML=propostaHTML(cur,DB.perfil);show('prop')}
 async function gerarPDF(){if(!window.html2pdf){toast('Sem internet para gerar PDF; use Ver → imprimir');return}toast('Gerando PDF…');
  const el=document.createElement('div');el.innerHTML=propostaHTML(cur,DB.perfil);el.style.width='760px';
@@ -721,8 +760,8 @@ async function pack(obj){const s=JSON.stringify(obj);try{if(window.CompressionSt
  return'b'+btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 async function unpack(str){const t=str[0],b=atob(str.slice(1).replace(/-/g,'+').replace(/_/g,'/'));if(t==='b')return JSON.parse(decodeURIComponent(escape(b)));
  const u=Uint8Array.from(b,c=>c.charCodeAt(0));const ds=new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw'));return JSON.parse(await new Response(ds).text())}
-async function enviarAprovacao(){if(!DB.perfil.tel){toast('Coloque seu WhatsApp no Perfil primeiro');show('perfil');return}
- const usados=new Set(cur.itens.map(i=>i.sid));const pay={o:cur,p:{nome:DB.perfil.nome,tel:DB.perfil.tel,doc:DB.perfil.doc,cidade:DB.perfil.cidade},s:DB.serv.filter(s=>usados.has(s.id)),m:DB.mat};
+async function enviarAprovacao(){if(!pago()){paywall('O link de aprovação pelo WhatsApp é do plano Profissional.');return}if(!DB.perfil.tel){toast('Coloque seu WhatsApp no Perfil primeiro');show('perfil');return}
+ const usados=new Set(cur.itens.map(i=>i.sid));const pay={o:{...cur,_pago:pago()},p:{nome:DB.perfil.nome,tel:DB.perfil.tel,doc:DB.perfil.doc,cidade:DB.perfil.cidade},s:DB.serv.filter(s=>usados.has(s.id)),m:DB.mat};
  const link=location.href.split('#')[0]+'#v='+await pack(pay);const tot=brl(calc(cur).total);
  const msg=`Olá${cur.cliente.nome?' '+cur.cliente.nome.split(' ')[0]:''}! Segue o orçamento nº ${cur.num} (${tot}). Abra para ver os detalhes e aprovar:\n${link}`;
  const tel=(cur.cliente.tel||'').replace(/\D/g,'');cur.status=cur.status==='apr'?'apr':'env';save();refreshTot();
@@ -745,7 +784,7 @@ function renderTabela(){const P=profs();$('profChips').innerHTML=Object.entries(
 function abrirModal(h){$('sheet').innerHTML=h;$('modal').classList.remove('hide')}
 function fecharModal(){$('modal').classList.add('hide')}
 let fsMats=[],fsDoOrc=false;
-function formServ(id,doOrc){fsDoOrc=!!doOrc;const s=id?svc(id):{id:'',p:DB.perfil.profs[0]||'pedreiro',n:'',u:'m²',base:'piso',pr:0,mat:{},kw:''};
+function formServ(id,doOrc){if(!id&&!pago()){paywall('Cadastrar seus próprios serviços é do plano Profissional.');return}fsDoOrc=!!doOrc;const s=id?svc(id):{id:'',p:DB.perfil.profs[0]||'pedreiro',n:'',u:'m²',base:'piso',pr:0,mat:{},kw:''};
  fsMats=Object.entries(s.mat).map(([k,q])=>({k,q}));const P=profs();
  abrirModal(`<h3>${id?'Editar serviço':'Incluir serviço'}</h3><p class="hint" style="margin-top:0">${fsDoOrc?'Ele vai para este orçamento e fica salvo na sua Tabela.':'Fica salvo na sua Tabela para os próximos orçamentos.'}</p>
  <input type="hidden" id="fsId" value="${s.id}">
@@ -775,7 +814,7 @@ function salvarServ(){const n=$('fsN').value.trim();if(!n){toast('Dê um nome ao
  if(fsDoOrc&&cur){const s=svc(id);const com=s.base==='un'?'':(cur.comodos[0]?.nome||'');const it={sid:id,com,q:1,pr:s.pr,auto:!!com};if(it.auto)it.q=autoQtd(it);cur.itens.push(it);save();renderEditor()}else renderTabela()}
 function delServ(id){if(cur&&DB.orcs.some(o=>o.itens.some(i=>i.sid===id))&&!confirm('Este serviço está em orçamentos salvos. Excluir mesmo assim?'))return;
  if(!confirm('Excluir este serviço da Tabela?'))return;DB.serv=DB.serv.filter(s=>s.id!==id);save();fecharModal();renderTabela()}
-function formMat(k){const m=k?DB.mat[k]:{n:'',u:'un',pr:0};
+function formMat(k){if(!k&&!pago()){paywall('Cadastrar seus próprios materiais é do plano Profissional.');return}const m=k?DB.mat[k]:{n:'',u:'un',pr:0};
  abrirModal(`<h3>${k?'Editar material':'Incluir material'}</h3><input type="hidden" id="fmK" value="${k||''}">
  <label>Nome do material</label><input id="fmN" value="${esc(m.n)}" placeholder="Ex.: Telha cerâmica">
  <div class="row"><div><label>Unidade</label><select id="fmU">${['un','m²','m','m³','kg','sc','L','gl','lata','barra','pç','rolo','cx'].map(u=>`<option ${u===m.u?'selected':''}>${u}</option>`).join('')}</select></div>
@@ -787,7 +826,7 @@ function salvarMat(){const n=$('fmN').value.trim();if(!n){toast('Dê um nome ao 
 function delMat(k){const us=DB.serv.filter(s=>s.mat[k]).length;if(!confirm(us?`Este material é usado em ${us} serviço(s). Excluir e tirar desses serviços?`:'Excluir este material?'))return;
  DB.serv.forEach(s=>delete s.mat[k]);delete DB.mat[k];save();fecharModal();renderTabela()}
 function togProf(k){const a=DB.perfil.profs;const i=a.indexOf(k);i>=0?a.splice(i,1):a.push(k);save();renderTabela()}
-function renderPerfil(){const p=DB.perfil;$('pNome').value=p.nome;$('pTel').value=p.tel;$('pDoc').value=p.doc;$('pCid').value=p.cidade;$('pPD').value=p.pd}
+function renderPerfil(){renderConta();const p=DB.perfil;$('pNome').value=p.nome;$('pTel').value=p.tel;$('pDoc').value=p.doc;$('pCid').value=p.cidade;$('pPD').value=p.pd}
 function upP(k,v){DB.perfil[k]=v;save()}
 function exportar(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(DB)],{type:'application/json'}));a.download='foster-orca-copia-seguranca_'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Cópia salva em Downloads')}
 function exportarPlanilha(){if(!DB.orcs.length){toast('Nenhum orçamento para exportar');return}
@@ -799,17 +838,110 @@ function exportarPlanilha(){if(!DB.orcs.length){toast('Nenhum orçamento para ex
  a.download='orcamentos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();toast('Planilha exportada')}
 function importar(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{let d;try{d=JSON.parse(t)}catch(e){toast('Arquivo inválido');return}if(!d||!d.perfil||!Array.isArray(d.orcs)){toast('Este arquivo não é uma cópia do Foster Orça');return}if(!confirm('Substituir os dados deste aparelho pela cópia ('+d.orcs.length+' orçamentos)?'))return;DB=d;cur=null;save();toast('Cópia restaurada');show('lista')})}
 
+/* ================= CONTA, NUVEM E PLANOS (Supabase) ================= */
+const SB_URL='https://fvsdlpnvqfvjdxmfgbjx.supabase.co',SB_KEY='sb_publishable_VT3XEbInyTr2Eu-AuLnrqw_BOrA2jYy';
+let sb=null,SESSAO=null,CONTA=null,PLANO_DEPOIS=null,syncT=null,authM='entrar';
+try{if(window.supabase)sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'fosterOrca_auth'}})}catch(e){}
+const pago=()=>!!CONTA&&CONTA.plano!=='gratis';
+function verAuth(m){$('landing').classList.add('hide');$('appView').classList.add('hide');$('authView').classList.remove('hide');authModo(m||'entrar');window.scrollTo(0,0)}
+function setAuthMsg(t,c){$('authMsg').textContent=t||'';$('authMsg').className='auth-msg '+(c||'')}
+function authModo(m){authM=m;const b=$('authTabs').children;b[0].classList.toggle('on',m==='entrar');b[1].classList.toggle('on',m==='criar');
+ $('authTabs').classList.toggle('hide',m==='esqueci'||m==='nova');$('fNome').classList.toggle('hide',m!=='criar');$('fEmail').classList.toggle('hide',m==='nova');$('fSenha').classList.toggle('hide',m==='esqueci');
+ $('lSenha').textContent=m==='nova'?'Nova senha (mínimo 6)':m==='criar'?'Crie uma senha (mínimo 6)':'Senha';$('aSenha').autocomplete=m==='entrar'?'current-password':'new-password';
+ $('aBtn').textContent={entrar:'Entrar',criar:'Criar conta grátis',esqueci:'Enviar link para trocar a senha',nova:'Salvar nova senha'}[m];
+ $('authSub').textContent={entrar:'Entre para salvar seus orçamentos na nuvem e usar em qualquer celular.',criar:'Grátis para começar: 3 orçamentos por mês, sem cartão.',esqueci:'Digite seu e-mail. Vamos mandar um link para você criar uma senha nova.',nova:'Digite a sua nova senha.'}[m];
+ $('lEsqueci').textContent=m==='entrar'?'Esqueci minha senha':'← Voltar para entrar';$('lEsqueci').onclick=()=>{authModo(m==='entrar'?'esqueci':'entrar');return false};setAuthMsg('')}
+const ERR_AUTH={'Invalid login credentials':'E-mail ou senha incorretos.','Email not confirmed':'Confirme seu e-mail antes de entrar (veja a caixa de entrada e o spam).','User already registered':'Este e-mail já tem conta. Toque em “Entrar”.','Password should be at least 6 characters.':'A senha precisa ter pelo menos 6 caracteres.'};
+async function authEnviar(e){e.preventDefault();if(!sb){setAuthMsg('Sem conexão com o servidor. Verifique a internet.','err');return}
+ const email=$('aEmail').value.trim().toLowerCase(),senha=$('aSenha').value,volta=location.origin+location.pathname;$('aBtn').disabled=true;setAuthMsg('Aguarde…');
+ try{let r;
+  if(authM==='entrar'){r=await sb.auth.signInWithPassword({email,password:senha})}
+  else if(authM==='criar'){r=await sb.auth.signUp({email,password:senha,options:{emailRedirectTo:volta,data:{nome:$('aNome').value.trim()}}});
+   if(!r.error){const nm=$('aNome').value.trim();if(nm){DB.perfil.nome=DB.perfil.nome||nm;try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(x){}}
+    if(!r.data.session){setAuthMsg('Conta criada! Abra o e-mail que enviamos para '+email+' e toque no link de confirmação. Depois volte aqui e entre.','ok');authModo('entrar');$('aEmail').value=email;setAuthMsg('Conta criada! Confirme pelo link enviado para '+email+' (veja também o spam) e depois entre.','ok');return}}}
+  else if(authM==='esqueci'){r=await sb.auth.resetPasswordForEmail(email,{redirectTo:volta});if(!r.error){setAuthMsg('Pronto! Enviamos o link para '+email+'.','ok');return}}
+  else if(authM==='nova'){r=await sb.auth.updateUser({password:senha});if(!r.error){setAuthMsg('Senha alterada!','ok');setTimeout(abrirApp,600);return}}
+  if(r.error){setAuthMsg(ERR_AUTH[r.error.message]||r.error.message,'err');return}
+ }catch(x){setAuthMsg('Não consegui conectar. Verifique a internet.','err')}finally{$('aBtn').disabled=false}}
+async function aoLogar(sess){SESSAO=sess;const uid=sess.user.id;LKEY=KEY+'_'+uid;
+ let local=fixDB(load(LKEY)._ts?load(LKEY):null);const legado=fixDB(load(KEY));
+ let nuvem=null;try{const {data}=await sb.from('orca_dados').select('dados,atualizado_em').eq('user_id',uid).maybeSingle();if(data)nuvem=fixDB(data.dados)}catch(e){}
+ // primeiro login neste aparelho: aproveita os dados que já estavam no celular
+ if(!local&&!nuvem&&legado&&(legado.orcs.length||legado.perfil.nome))local=legado;
+ DB=(nuvem&&(!local||(nuvem._ts||0)>(local._ts||0)))?nuvem:(local||nuvem||load('__vazio'));
+ if(!DB.perfil.nome&&sess.user.user_metadata&&sess.user.user_metadata.nome)DB.perfil.nome=sess.user.user_metadata.nome;
+ DB.entrou=true;try{localStorage.setItem(LKEY,JSON.stringify(DB))}catch(e){}if(!nuvem)agendaSync(true);
+ await carregarConta()}
+async function carregarConta(){if(!sb||!SESSAO)return;try{const {data,error}=await sb.rpc('orca_minha_conta');if(!error){CONTA=data;try{localStorage.setItem(LKEY+'_conta',JSON.stringify(data))}catch(e){}}}catch(e){}
+ if(!CONTA){try{CONTA=JSON.parse(localStorage.getItem(LKEY+'_conta'))}catch(e){}}pintaIA();if(!$('tab-perfil').classList.contains('hide'))renderConta()}
+function agendaSync(ja){if(!sb||!SESSAO)return;clearTimeout(syncT);syncT=setTimeout(async()=>{try{const {_conta,...d}=DB;await sb.from('orca_dados').upsert({user_id:SESSAO.user.id,dados:d,atualizado_em:new Date().toISOString()})}catch(e){}},ja?10:1500)}
+function abrirApp(){$('landing').classList.add('hide');$('authView').classList.add('hide');$('appView').classList.remove('hide');cur=null;show('lista');checaIA();
+ if(PLANO_DEPOIS){const p=PLANO_DEPOIS;PLANO_DEPOIS=null;setTimeout(()=>pagarPix(p),300)}}
+async function sair(){if(!confirm('Sair da sua conta neste aparelho?'))return;clearTimeout(syncT);try{const {_conta,...d}=DB;await sb.from('orca_dados').upsert({user_id:SESSAO.user.id,dados:d,atualizado_em:new Date().toISOString()})}catch(e){}
+ try{await sb.auth.signOut()}catch(e){}SESSAO=null;CONTA=null;LKEY=KEY;DB=load();cur=null;verAuth('entrar')}
+async function podeCriar(){if(!sb||!SESSAO)return true;try{const {data,error}=await sb.rpc('orca_novo_orcamento');if(error)return true;if(CONTA){CONTA.usados_mes=data.usados}
+ if(!data.ok){paywall(`Você já usou os ${data.limite} orçamentos grátis deste mês.`);return false}return true}catch(e){return true}}
+function renderConta(){if(!SESSAO){$('contaEmail').textContent='';$('contaPlano').innerHTML='';return}$('contaEmail').textContent=SESSAO.user.email;const c=CONTA;
+ if(!c){$('contaPlano').innerHTML='<p class="hint">Carregando plano… (precisa de internet)</p>';return}
+ const nomes={gratis:'Grátis',mensal:'Profissional mensal',anual:'Profissional anual'};const lim=c.limite_gratis,u=c.usados_mes||0;
+ let h=`<div class="planbox ${pago()?'pago':''}"><small class="hint" style="margin:0">Seu plano</small><br><b>${nomes[c.plano]}</b>`;
+ if(pago())h+=`<div class="hint" style="margin:4px 0 0">Válido até <b>${new Date(c.valido_ate).toLocaleDateString('pt-BR')}</b> · orçamentos ilimitados</div>`;
+ else h+=`<div class="uso"><i style="width:${Math.min(100,u/lim*100)}%"></i></div><div class="hint" style="margin:0">${u} de ${lim} orçamentos usados este mês</div>`;
+ h+='</div>';
+ if(c.pendente)h+=`<div class="pg pendente" style="margin-top:10px"><b>Pagamento aguardando confirmação</b><div class="hint" style="margin:2px 0">Código ${c.pendente.codigo} · ${brl(+c.pendente.valor)} · plano ${c.pendente.plano}</div><div class="btns"><button class="btnA" onclick="mostrarPix(CONTA.pendente)">Ver QR Code do Pix</button><button class="btn2" onclick="carregarConta()">Já liberou?</button></div></div>`;
+ h+=`<div class="btns" style="margin-top:10px">${pago()?`<button class="btn2" onclick="pagarPix('${c.plano}')">Renovar ${c.plano==='anual'?'anual':'mensal'}</button>`:`<button class="btnA" onclick="pagarPix('mensal')">Assinar ${brl(+c.precos.mensal)}/mês</button><button class="btnA" onclick="pagarPix('anual')">Assinar ${brl(+c.precos.anual)}/ano</button>`}<button class="btn2" onclick="verLanding('lp-planos')">Comparar planos</button></div>`;
+ $('contaPlano').innerHTML=h;$('adminCard').classList.toggle('hide',!c.admin);if(c.admin&&!$('adminBox').dataset.ok)carregarAdmin()}
+function paywall(motivo){const c=CONTA||{precos:{mensal:19.9,anual:149}};abrirModal(`<h3>Libere tudo com o plano Profissional</h3><p class="hint" style="margin-top:0">${esc(motivo)}</p>
+ <ul style="list-style:none;margin:10px 0 14px;line-height:1.9">${['Orçamentos ilimitados','Orçamento por voz com IA','PDF só com a sua marca','Link de aprovação no WhatsApp','Seus serviços, materiais e profissões'].map(x=>'<li>✅ '+x+'</li>').join('')}</ul>
+ <div class="btns"><button class="btnA" style="flex:1" onclick="pagarPix('mensal')">${brl(+c.precos.mensal)}/mês</button><button class="btnA" style="flex:1" onclick="pagarPix('anual')">${brl(+c.precos.anual)}/ano</button></div>
+ <p class="hint" style="text-align:center">Pagamento por Pix. Liberação após a confirmação.</p><div class="btns"><span style="flex:1"></span><button class="btn2" onclick="fecharModal()">Agora não</button></div>`)}
+async function pagarPix(plano){if(!SESSAO){PLANO_DEPOIS=plano;verAuth('criar');return}abrirModal('<p style="text-align:center;padding:30px">Gerando o Pix…</p>');
+ try{const {data,error}=await sb.rpc('orca_assinar',{p_plano:plano});if(error)throw error;await carregarConta();mostrarPix(data)}catch(e){fecharModal();toast('Não consegui gerar o Pix. Verifique a internet.')}}
+function emv(id,v){v=String(v);return id+String(v.length).padStart(2,'0')+v}
+function crc16(t){let c=0xFFFF;for(let i=0;i<t.length;i++){c^=t.charCodeAt(i)<<8;for(let j=0;j<8;j++)c=(c&0x8000)?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF}return c.toString(16).toUpperCase().padStart(4,'0')}
+const semAcento=t=>String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9 ]/g,'').toUpperCase().trim();
+function pixCopiaCola(chave,nome,cidade,valor,txid){const p=emv('00','01')+emv('26',emv('00','br.gov.bcb.pix')+emv('01',chave))+emv('52','0000')+emv('53','986')+emv('54',(+valor).toFixed(2))+emv('58','BR')+emv('59',semAcento(nome).slice(0,25)||'FOSTER')+emv('60',semAcento(cidade).slice(0,15)||'SAO PAULO')+emv('62',emv('05',String(txid||'***').replace(/[^A-Za-z0-9]/g,'').slice(0,25)))+'6304';return p+crc16(p)}
+function mostrarPix(d){const pix=d.pix||(CONTA&&CONTA.pix)||{};if(!pix.chave){abrirModal('<h3>Pix ainda não configurado</h3><p class="hint">Fale com o suporte para concluir a assinatura.</p><div class="btns"><button class="btn2" onclick="fecharModal()">Fechar</button></div>');return}
+ const cod=pixCopiaCola(pix.chave,pix.nome,pix.cidade,d.valor,d.codigo);let qr='';try{const q=qrcode(0,'M');q.addData(cod);q.make();qr=q.createSvgTag({cellSize:5,margin:2,scalable:true})}catch(e){qr='<p class="hint">QR indisponível: use o Pix copia e cola.</p>'}
+ const tel=(d.contato||(CONTA&&CONTA.contato)||'5524992096103');const msg=`Olá! Paguei a assinatura do Foster Orça.\nCódigo: ${d.codigo}\nPlano: ${d.plano} — ${brl(+d.valor)}\nE-mail da conta: ${SESSAO?SESSAO.user.email:''}\n(segue o comprovante)`;
+ abrirModal(`<div class="pixbox"><h3>Pague com Pix</h3><p class="hint" style="margin:0">Plano ${d.plano==='anual'?'Profissional anual':'Profissional mensal'} · código <b>${esc(d.codigo)}</b></p>
+ <div class="pv">${brl(+d.valor)}</div><div class="qr">${qr}</div><p class="hint" style="margin:0">Abra o app do seu banco → Pix → <b>Ler QR Code</b>. Ou copie o código:</p>
+ <div class="cola"><input id="pixCola" readonly value="${esc(cod)}"><button class="btn" onclick="copiarPix()">Copiar</button></div>
+ <p class="hint">Recebedor: ${esc(pix.nome||'')} · chave aleatória</p>
+ <a class="btnG" style="display:block;text-decoration:none;padding:13px;border-radius:10px;font-weight:700;margin-top:8px" target="_blank" href="https://wa.me/${tel}?text=${encodeURIComponent(msg)}">💬 Já paguei: enviar comprovante</a>
+ <p class="hint">A liberação é feita assim que o pagamento é confirmado. Volte aqui e toque em “Já liberou?”.</p>
+ <div class="btns"><button class="btn2" style="flex:1" onclick="fecharModal();carregarConta().then(()=>{toast(pago()?'Plano liberado! 🎉':'Ainda aguardando confirmação')})">Já liberou?</button><button class="btn2" onclick="fecharModal()">Fechar</button></div></div>`)}
+async function copiarPix(){const v=$('pixCola').value;try{await navigator.clipboard.writeText(v);toast('Código Pix copiado')}catch(e){$('pixCola').select();document.execCommand('copy');toast('Código Pix copiado')}}
+async function carregarAdmin(){const B=$('adminBox');B.dataset.ok='1';B.innerHTML='<p class="hint">Carregando…</p>';
+ try{const {data,error}=await sb.rpc('orca_admin_pagamentos');if(error)throw error;const r=data.resumo;const P=data.pagamentos;
+  B.innerHTML=`<div class="adm-res"><div>Usuários<b>${r.usuarios}</b></div><div>Assinantes<b>${r.assinantes}</b></div><div>Recebido no mês<b>${brl(+r.recebido_mes)}</b></div></div>`+
+  (P.length?P.map(p=>`<div class="pg ${p.status}"><b>${esc(p.nome||p.email||'—')}</b> <span class="pill">${p.status}</span><div class="hint" style="margin:2px 0">${esc(p.email||'')} · ${p.codigo} · ${p.plano} · <b>${brl(+p.valor)}</b> · ${new Date(p.solicitado_em).toLocaleString('pt-BR')}</div>
+  ${p.status==='pendente'?`<div class="btns"><button class="btnG" onclick="decidir('${p.codigo}','confirmar')">✔ Confirmar pagamento</button><button class="btn2" onclick="decidir('${p.codigo}','cancelar')">Cancelar</button></div>`:''}</div>`).join(''):'<p class="hint">Nenhum pedido de assinatura ainda.</p>')+
+  '<p class="hint">Confira o valor e o código no extrato do banco antes de confirmar. Confirmar libera o plano na hora (mensal: +1 mês, anual: +1 ano).</p>'}
+ catch(e){B.innerHTML='<p class="hint">Não foi possível carregar.</p>'}}
+async function decidir(cod,acao){if(!confirm((acao==='confirmar'?'Confirmar o recebimento do Pix ':'Cancelar o pedido ')+cod+'?'))return;
+ try{const {data,error}=await sb.rpc('orca_admin_decidir',{p_codigo:cod,p_acao:acao});if(error)throw error;toast(acao==='confirmar'?'Plano liberado até '+new Date(data.valido_ate).toLocaleDateString('pt-BR'):'Pedido cancelado');carregarAdmin()}catch(e){toast('Erro: '+(e.message||e))}}
+
 /* ================= APRESENTAÇÃO / PLANOS ================= */
-function verLanding(sec){$('appView').classList.add('hide');$('landing').classList.remove('hide');calcPerda();setTimeout(()=>{const el=sec&&document.getElementById(sec);el?el.scrollIntoView():window.scrollTo(0,0)},30)}
-function entrar(){DB.entrou=true;save();$('landing').classList.add('hide');$('appView').classList.remove('hide');show('lista');checaIA()}
+function verLanding(sec){$('appView').classList.add('hide');$('authView').classList.add('hide');$('landing').classList.remove('hide');calcPerda();setTimeout(()=>{const el=sec&&document.getElementById(sec);el?el.scrollIntoView():window.scrollTo(0,0)},30)}
+function entrar(){DB.entrou=true;try{localStorage.setItem('fosterOrca_entrou','1')}catch(e){}if(SESSAO)abrirApp();else verAuth('criar')}
 function irPara(e,id){e.preventDefault();document.getElementById(id).scrollIntoView({behavior:'smooth'})}
 function calcPerda(){const o=+$('lcObras').value||0,v=+$('lcValor').value||0,p=+$('lcPct').value||0;$('lcPctT').textContent=p+'%';const m=o*v*p/100;
  $('lcMes').textContent=brl(m).replace(',00','');$('lcAno').textContent=brl(m*12).replace(',00','');
  $('lcCmp').innerHTML=m>0?`O plano anual custa <b>R$ 149</b>. ${m*12>=149?'O que você perde no ano pagaria <b>'+Math.floor(m*12/149)+' anos</b> de assinatura.':'Menos do que uma obra bem cobrada.'}`:''}
-function assinar(plano){window.open('https://wa.me/5524992096103?text='+encodeURIComponent('Olá! Quero assinar o Foster Orça — '+plano+'.'+(DB.perfil.nome?' Meu nome: '+DB.perfil.nome+'.':'')),'_blank')}
+function assinar(plano){const pl=/anual/i.test(plano)?'anual':'mensal';if(!SESSAO){PLANO_DEPOIS=pl;verAuth('criar');setAuthMsg('Crie sua conta (ou entre) para assinar o plano '+pl+'.','ok');return}abrirApp();pagarPix(pl)}
 
 /* ================= INÍCIO ================= */
-if(location.hash.startsWith('#v='))abrirCliente();else if(!DB.entrou||location.hash==='#planos')verLanding(location.hash==='#planos'?'lp-planos':'');else{show('lista');checaIA()}
+(async function iniciar(){
+ if(location.hash.startsWith('#v=')){abrirCliente();return}
+ let jaViu=false;try{jaViu=!!localStorage.getItem('fosterOrca_entrou')||!!DB.entrou}catch(e){}
+ let sess=null;if(sb){try{const {data}=await sb.auth.getSession();sess=data.session}catch(e){}
+  sb.auth.onAuthStateChange((ev,se)=>{if(ev==='PASSWORD_RECOVERY'){SESSAO=se;verAuth('nova')}else if(ev==='SIGNED_IN'&&se&&(!SESSAO||SESSAO.user.id!==se.user.id)){aoLogar(se).then(abrirApp)}else if(se)SESSAO=se})}
+ if(/type=recovery/.test(location.hash))return;
+ if(location.hash==='#planos'){verLanding('lp-planos');if(sess)aoLogar(sess);return}
+ if(sess){await aoLogar(sess);abrirApp();return}
+ if(!sb){$('authView').classList.add('hide');$('landing').classList.add('hide');$('appView').classList.remove('hide');show('lista');checaIA();toast('Sem conexão: usando o modo offline');return}
+ jaViu?verAuth('entrar'):verLanding('')})();
 </script>
 </body>
 </html>

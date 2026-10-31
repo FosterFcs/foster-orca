@@ -40,6 +40,19 @@ Deno.serve(async (req) => {
   if (acao === "ping") return json({ ok: true, chave: !!key }, 200, headers);
   if (!key) return json({ erro: "IA não configurada" }, 500, headers);
 
+  // Só assinantes usam a IA: confere o plano do usuário logado no banco
+  const auth = req.headers.get("authorization") || "";
+  if (!auth.startsWith("Bearer ")) return json({ erro: "login_necessario" }, 401, headers);
+  const sbUrl = Deno.env.get("SUPABASE_URL")!, sbAnon = Deno.env.get("SUPABASE_ANON_KEY")!;
+  const conta = await fetch(`${sbUrl}/rest/v1/rpc/orca_minha_conta`, {
+    method: "POST",
+    headers: { apikey: sbAnon, Authorization: auth, "Content-Type": "application/json" },
+    body: "{}",
+  });
+  if (!conta.ok) return json({ erro: "login_necessario" }, 401, headers);
+  const plano = (await conta.json())?.plano;
+  if (!plano || plano === "gratis") return json({ erro: "plano_gratis" }, 402, headers);
+
   try {
     if (acao === "interpretar") {
       const { system, texto } = await req.json();
