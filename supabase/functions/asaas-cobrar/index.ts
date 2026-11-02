@@ -1,6 +1,6 @@
 // Central de pagamentos Foster: gera a cobrança Pix no Asaas para um pedido de um app.
-// O app chama com o token do usuário logado: POST { produto: "orca" | "academia", codigo, cpf?, nome? }
-// A cobrança leva externalReference "fosterorca:<codigo>" ou "academia:<codigo>";
+// O app chama com o token do usuário logado: POST { produto: "orca" | "academia" | "obras", codigo, cpf?, nome? }  (cpf aceita CPF ou CNPJ)
+// A cobrança leva externalReference "fosterorca:<codigo>", "academia:<codigo>" ou "fosterobras:<codigo>";
 // quando o Asaas avisa o pagamento, a função asaas-webhook confirma o pedido sozinha.
 // Segredos: ASAAS_API_KEY (o mesmo do webhook).
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
@@ -12,6 +12,8 @@ const PRODUTOS: Record<string, { tabela: string; ref: string; descricao: (p: any
     descricao: (p) => `Foster Orça - plano Profissional ${p.plano === "anual" ? "anual" : "mensal"} (${p.codigo})` },
   academia: { tabela: "acad_compras", ref: "academia",
     descricao: (p) => `Academia Foster - ${p.creditos} certificado${p.creditos > 1 ? "s" : ""} (${p.codigo})` },
+  obras: { tabela: "obra_pagamentos", ref: "fosterobras",
+    descricao: (p) => `Foster Obras - plano ${({ basico: "Básico", profissional: "Profissional", empresa: "Empresa" } as any)[p.plano] || p.plano} mensal (${p.codigo})` },
 };
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -26,6 +28,11 @@ function cpfValido(c: string) {
   if (!/^\d{11}$/.test(c) || /^(\d)\1{10}$/.test(c)) return false;
   const dv = (n: number) => { let s = 0; for (let i = 0; i < n; i++) s += +c[i] * (n + 1 - i); const r = (s * 10) % 11; return r === 10 ? 0 : r; };
   return dv(9) === +c[9] && dv(10) === +c[10];
+}
+function cnpjValido(c: string) {
+  if (!/^\d{14}$/.test(c) || /^(\d)\1{13}$/.test(c)) return false;
+  const dv = (n: number) => { const pesos = n === 12 ? [5,4,3,2,9,8,7,6,5,4,3,2] : [6,5,4,3,2,9,8,7,6,5,4,3,2]; let s = 0; for (let i = 0; i < n; i++) s += +c[i] * pesos[i]; const r = s % 11; return r < 2 ? 0 : 11 - r; };
+  return dv(12) === +c[12] && dv(13) === +c[13];
 }
 function vencimento(dias: number) {
   const d = new Date(Date.now() - 3 * 3600e3 + dias * 864e5); // horário de Brasília
@@ -86,7 +93,7 @@ Deno.serve(async (req) => {
         cpf = c?.cpf || "";
       }
       if (!cpf) return resp({ precisa_cpf: true });
-      if (!cpfValido(cpf)) return resp({ erro: "cpf_invalido" }, 400);
+      if (!(cpf.length === 14 ? cnpjValido(cpf) : cpfValido(cpf))) return resp({ erro: "cpf_invalido" }, 400);
       const nome = String(body.nome || user.user_metadata?.nome || "").trim().slice(0, 100) || String(user.email || "Cliente").split("@")[0];
       const achado = await asaas(`/customers?cpfCnpj=${cpf}&limit=1`);
       let clienteId = achado?.data?.[0]?.id;
