@@ -936,14 +936,42 @@ function renderConta(){if(!SESSAO){$('contaEmail').textContent='';$('contaPlano'
 function paywall(motivo){const c=CONTA||{precos:{mensal:19.9,anual:149}};abrirModal(`<h3>Libere tudo com o plano Profissional</h3><p class="hint" style="margin-top:0">${esc(motivo)}</p>
  <ul style="list-style:none;margin:10px 0 14px;line-height:1.9">${['Orçamentos ilimitados','Orçamento por voz com IA','PDF só com a sua marca','Link de aprovação no WhatsApp','Seus serviços, materiais e profissões'].map(x=>'<li>✅ '+x+'</li>').join('')}</ul>
  <div class="btns"><button class="btnA" style="flex:1" onclick="pagarPix('mensal')">${brl(+c.precos.mensal)}/mês</button><button class="btnA" style="flex:1" onclick="pagarPix('anual')">${brl(+c.precos.anual)}/ano</button></div>
- <p class="hint" style="text-align:center">Pagamento por Pix. Liberação após a confirmação.</p><div class="btns"><span style="flex:1"></span><button class="btn2" onclick="fecharModal()">Agora não</button></div>`)}
+ <p class="hint" style="text-align:center">Pagamento por Pix. Liberação automática assim que o Pix cair.</p><div class="btns"><span style="flex:1"></span><button class="btn2" onclick="fecharModal()">Agora não</button></div>`)}
 async function pagarPix(plano){if(!SESSAO){PLANO_DEPOIS=plano;verAuth('criar');return}abrirModal('<p style="text-align:center;padding:30px">Gerando o Pix…</p>');
  try{const {data,error}=await sb.rpc('orca_assinar',{p_plano:plano});if(error)throw error;await carregarConta();mostrarPix(data)}catch(e){fecharModal();toast('Não consegui gerar o Pix. Verifique a internet.')}}
 function emv(id,v){v=String(v);return id+String(v.length).padStart(2,'0')+v}
 function crc16(t){let c=0xFFFF;for(let i=0;i<t.length;i++){c^=t.charCodeAt(i)<<8;for(let j=0;j<8;j++)c=(c&0x8000)?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF}return c.toString(16).toUpperCase().padStart(4,'0')}
 const semAcento=t=>String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9 ]/g,'').toUpperCase().trim();
 function pixCopiaCola(chave,nome,cidade,valor,txid){const p=emv('00','01')+emv('26',emv('00','br.gov.bcb.pix')+emv('01',chave))+emv('52','0000')+emv('53','986')+emv('54',(+valor).toFixed(2))+emv('58','BR')+emv('59',semAcento(nome).slice(0,25)||'FOSTER')+emv('60',semAcento(cidade).slice(0,15)||'SAO PAULO')+emv('62',emv('05',String(txid||'***').replace(/[^A-Za-z0-9]/g,'').slice(0,25)))+'6304';return p+crc16(p)}
-function mostrarPix(d){const pix=d.pix||(CONTA&&CONTA.pix)||{};if(!pix.chave){abrirModal('<h3>Pix ainda não configurado</h3><p class="hint">Fale com o suporte para concluir a assinatura.</p><div class="btns"><button class="btn2" onclick="fecharModal()">Fechar</button></div>');return}
+// ---- Pix automático (central de pagamentos Foster no Asaas): libera o plano sozinho quando o pagamento cai
+const COBRAR_URL='https://fvsdlpnvqfvjdxmfgbjx.supabase.co/functions/v1/asaas-cobrar';let PIX_POLL=null;
+async function cobrarAsaas(codigo,extra){const {data}=await sb.auth.getSession();const s=data&&data.session||SESSAO;
+ const r=await fetch(COBRAR_URL,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+s.access_token},body:JSON.stringify(Object.assign({produto:'orca',codigo},extra||{}))});return r.json().catch(()=>({}))}
+const assinou=()=>!!CONTA&&['mensal','anual'].includes(CONTA.plano)&&!CONTA.pendente;
+async function mostrarPix(d,extra){abrirModal('<p style="text-align:center;padding:30px">Gerando o Pix…</p>');let r=null;
+ try{r=await cobrarAsaas(d.codigo,extra)}catch(e){r=null}
+ if(r&&r.pago){await carregarConta();fecharModal();toast(assinou()?'Plano liberado! 🎉':'Pagamento recebido. Liberando em instantes…');return}
+ if(r&&r.precisa_cpf)return pedirCpfPix(d);
+ if(r&&r.erro==='cpf_invalido')return pedirCpfPix(d,'CPF inválido. Confira os números.');
+ if(r&&r.pix&&r.pix.payload)return mostrarPixAuto(d,r);
+ mostrarPixManual(d)}
+function pedirCpfPix(d,erro){const nome=(DB&&DB.perfil&&DB.perfil.nome)||'';
+ abrirModal(`<h3>Dados para o Pix</h3><p class="hint" style="margin-top:0">O banco pede nome e CPF de quem paga. Você informa só na primeira vez.</p>
+ <label class="hint" style="display:block;margin:8px 0 2px">Nome completo</label><input id="pxNome" value="${esc(nome)}" autocomplete="name" style="width:100%">
+ <label class="hint" style="display:block;margin:8px 0 2px">CPF</label><input id="pxCpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" value="${/^\d{11}$/.test(String(DB&&DB.perfil&&DB.perfil.doc||'').replace(/\D/g,''))?esc(DB.perfil.doc):''}" style="width:100%">
+ ${erro?`<p class="hint" style="color:#c62828">${esc(erro)}</p>`:''}
+ <div class="btns" style="margin-top:12px"><button class="btnA" style="flex:1" id="pxOk">Gerar Pix</button><button class="btn2" onclick="fecharModal()">Cancelar</button></div>`);
+ $('pxOk').onclick=()=>{const cpf=$('pxCpf').value.replace(/\D/g,''),n=$('pxNome').value.trim();if(cpf.length!==11){$('pxCpf').focus();return}if(n.split(/\s+/).length<2){$('pxNome').focus();return}mostrarPix(d,{cpf,nome:n})}}
+function mostrarPixAuto(d,r){
+ abrirModal(`<div class="pixbox" id="pixAuto"><h3>Pague com Pix</h3><p class="hint" style="margin:0">Plano ${d.plano==='anual'?'Profissional anual':'Profissional mensal'} · código <b>${esc(d.codigo)}</b></p>
+ <div class="pv">${brl(+d.valor)}</div><div class="qr"><img alt="QR Code do Pix" style="width:100%;max-width:240px" src="data:image/png;base64,${r.pix.imagem}"></div>
+ <p class="hint" style="margin:0">Abra o app do seu banco → Pix → <b>Ler QR Code</b>. Ou copie o código:</p>
+ <div class="cola"><input id="pixCola" readonly value="${esc(r.pix.payload)}"><button class="btn" onclick="copiarPix()">Copiar</button></div>
+ <p class="hint" id="pixStatus" style="font-weight:600">⏳ Aguardando o pagamento… O plano é liberado sozinho, em poucos segundos, assim que o Pix cair. Não precisa mandar comprovante.</p>
+ <div class="btns"><button class="btn2" style="flex:1" onclick="fecharModal()">Fechar</button></div></div>`);
+ clearInterval(PIX_POLL);let n=0;PIX_POLL=setInterval(async()=>{if(!$('pixAuto')||$('modal').classList.contains('hide')||++n>120){clearInterval(PIX_POLL);return}
+  await carregarConta();if(assinou()){clearInterval(PIX_POLL);fecharModal();toast('Pagamento confirmado. Plano liberado! 🎉')}},5000)}
+function mostrarPixManual(d){const pix=d.pix||(CONTA&&CONTA.pix)||{};if(!pix.chave){abrirModal('<h3>Pix ainda não configurado</h3><p class="hint">Fale com o suporte para concluir a assinatura.</p><div class="btns"><button class="btn2" onclick="fecharModal()">Fechar</button></div>');return}
  const cod=pixCopiaCola(pix.chave,pix.nome,pix.cidade,d.valor,d.codigo);let qr='';try{const q=qrcode(0,'M');q.addData(cod);q.make();qr=q.createSvgTag({cellSize:5,margin:2,scalable:true})}catch(e){qr='<p class="hint">QR indisponível: use o Pix copia e cola.</p>'}
  const tel=(d.contato||(CONTA&&CONTA.contato)||'5524992096103');const msg=`Olá! Paguei a assinatura do Foster Orça.\nCódigo: ${d.codigo}\nPlano: ${d.plano} — ${brl(+d.valor)}\nE-mail da conta: ${SESSAO?SESSAO.user.email:''}\n(segue o comprovante)`;
  abrirModal(`<div class="pixbox"><h3>Pague com Pix</h3><p class="hint" style="margin:0">Plano ${d.plano==='anual'?'Profissional anual':'Profissional mensal'} · código <b>${esc(d.codigo)}</b></p>
