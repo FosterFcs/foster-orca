@@ -15,7 +15,8 @@ const PRODUTOS: Record<string, { tabela: string; ref: string; descricao: (p: any
   obras: { tabela: "obra_pagamentos", ref: "fosterobras",
     descricao: (p) => `Foster Obras - plano ${({ basico: "Básico", profissional: "Profissional", empresa: "Empresa" } as any)[p.plano] || p.plano} mensal (${p.codigo})` },
   vistoria: { tabela: "vist_pagamentos", ref: "fostervist",
-    descricao: (p) => `VistorIA - plano ${p.plano === "profissional" ? "Profissional" : "Essencial"} ${p.dias > 40 ? "anual" : "mensal"} (${p.codigo})` },
+    descricao: (p) => p.plano === "creditos" ? `VistorIA - pacote de ${p.creditos || 10} diagnósticos por IA (${p.codigo})`
+      : `VistorIA - plano ${p.plano === "profissional" ? "Profissional" : "Essencial"} ${p.dias > 40 ? "anual" : "mensal"} (${p.codigo})` },
 };
 const CORS = {
   "Access-Control-Allow-Origin": "*",
