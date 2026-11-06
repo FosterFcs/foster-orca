@@ -1,6 +1,6 @@
 // Central de pagamentos Foster: gera a cobrança Pix no Asaas para um pedido de um app.
-// O app chama com o token do usuário logado: POST { produto: "orca" | "academia" | "obras", codigo, cpf?, nome? }  (cpf aceita CPF ou CNPJ)
-// A cobrança leva externalReference "fosterorca:<codigo>", "academia:<codigo>" ou "fosterobras:<codigo>";
+// O app chama com o token do usuário logado: POST { produto: "orca" | "academia" | "obras" | "vistoria", codigo, cpf?, nome? }  (cpf aceita CPF ou CNPJ)
+// A cobrança leva externalReference "fosterorca:<codigo>", "academia:<codigo>", "fosterobras:<codigo>" ou "fostervist:<codigo>";
 // quando o Asaas avisa o pagamento, a função asaas-webhook confirma o pedido sozinha.
 // Segredos: ASAAS_API_KEY (o mesmo do webhook).
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
@@ -14,6 +14,8 @@ const PRODUTOS: Record<string, { tabela: string; ref: string; descricao: (p: any
     descricao: (p) => `Academia Foster - ${p.creditos} certificado${p.creditos > 1 ? "s" : ""} (${p.codigo})` },
   obras: { tabela: "obra_pagamentos", ref: "fosterobras",
     descricao: (p) => `Foster Obras - plano ${({ basico: "Básico", profissional: "Profissional", empresa: "Empresa" } as any)[p.plano] || p.plano} mensal (${p.codigo})` },
+  vistoria: { tabela: "vist_pagamentos", ref: "fostervist",
+    descricao: (p) => `VistorIA - plano ${p.plano === "profissional" ? "Profissional" : "Essencial"} ${p.dias > 40 ? "anual" : "mensal"} (${p.codigo})` },
 };
 const CORS = {
   "Access-Control-Allow-Origin": "*",

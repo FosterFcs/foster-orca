@@ -5,7 +5,7 @@
 // Produtos atendidos: Foster Calc (tabela perfis), VistorIA (tabela vist_contas),
 // Foster Orça (orca_pagamentos), Academia Foster (acad_compras) e Foster Obras (obra_pagamentos).
 // Como o produto é identificado, nesta ordem:
-//   0) externalReference "fosterorca:<codigo>", "academia:<codigo>" ou "fosterobras:<codigo>": cobrança gerada pela função asaas-cobrar
+//   0) externalReference "fosterorca:<codigo>", "academia:<codigo>", "fosterobras:<codigo>" ou "fostervist:<codigo>": cobrança gerada pela função asaas-cobrar
 //      para um pedido do app; confirma o pedido pelo código (não depende de e-mail);
 //   1) externalReference no formato "produto:plano" (ex.: "fostercalc:pro-anual"), quando a cobrança for criada pela API;
 //   2) id do link de pagamento (LINKS abaixo = final do endereço asaas.com/c/<id>);
@@ -43,6 +43,7 @@ const PEDIDOS: Record<string, { produto: string; fn: string }> = {
   fosterorca: { produto: "fosterorca", fn: "orca_confirmar_interno" },
   academia: { produto: "academia", fn: "acad_confirmar_interno" },
   fosterobras: { produto: "fosterobras", fn: "obra_confirmar_interno" },
+  fostervist: { produto: "vistoria", fn: "vist_confirmar_interno" },
 };
 
 const ATIVAR = new Set(["PAYMENT_CONFIRMED", "PAYMENT_RECEIVED"]);
