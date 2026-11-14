@@ -106,6 +106,8 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
 .lp-hero h1{font-size:31px;line-height:1.15;margin:16px auto 12px;max-width:560px;font-weight:900}.lp-hero h1 span{color:#ff5a5a}
 .lp-hero p{opacity:.85;max-width:560px;margin:0 auto 20px;font-size:15.5px}.lp-hero small{display:block;opacity:.55;margin-top:12px;font-size:12px}
 .lp-ctas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.lp-demo{display:inline-block;margin:12px auto 0;background:rgba(255,255,255,.08);color:#fff;border:2px dashed rgba(255,255,255,.45);padding:10px 18px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
+.aviso.demo{background:#fff7e6;border-color:#f59e0b;color:#7c4a03}.aviso.demo button{margin-top:8px;background:#d62828;color:#fff;border:0;border-radius:10px;padding:9px 14px;font-weight:800;font-size:14px}
 .lp-btn{background:var(--red);color:#fff;padding:15px 24px;font-size:16px;border-radius:12px;box-shadow:0 8px 20px rgba(214,40,40,.35);font-weight:800}
 .lp-btn2{display:inline-block;background:transparent;color:inherit;border:2px solid currentColor;padding:13px 22px;font-size:15px;border-radius:12px;font-weight:700;text-decoration:none;cursor:pointer}
 .phone{width:250px;margin:30px auto 0;background:#000;border-radius:34px;padding:10px;box-shadow:0 25px 50px rgba(0,0,0,.5),0 0 0 2px #3d4047;transform:rotate(-2deg)}
@@ -196,6 +198,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
    </form>
    <p class="auth-msg" id="authMsg"></p>
    <div class="auth-links"><a href="#" id="lEsqueci" onclick="authModo('esqueci');return false">Esqueci minha senha</a><a href="#" onclick="verLanding();return false">← Conhecer o app</a></div>
+   <div class="auth-links" style="justify-content:center;margin-top:10px"><a href="#" onclick="entrarDemo();return false" style="font-weight:800">▶ Só quero ver como funciona (demonstração)</a></div>
   </div>
   <p class="hint" style="text-align:center;margin-top:14px">Foster Tech Soluções · (24) 99209-6103</p>
  </div>
@@ -210,6 +213,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
   <h1>Fale o serviço.<br><span>O orçamento fica pronto</span> em 1 minuto.</h1>
   <p>Pedreiro, pintor, eletricista, encanador, gesseiro ou qualquer profissional de obra: você descreve por voz e o Foster Orça monta o <b>croqui</b>, a <b>lista de material</b> e um <b>PDF profissional</b> para o cliente aprovar pelo WhatsApp.</p>
   <div class="lp-ctas"><button class="lp-btn" onclick="entrar()">Começar grátis</button><a class="lp-btn2" href="#lp-planos" onclick="irPara(event,'lp-planos')">Ver planos</a></div>
+  <button class="lp-demo" onclick="entrarDemo()">▶ Testar agora, sem cadastro</button>
   <small>7 dias grátis com IA · Sem cartão · Funciona no navegador do celular</small>
   <div class="phone"><div class="ph-scr">
    <div class="ph-bar"></div>
@@ -305,6 +309,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
  <section class="lp-final">
   <h2>Seu próximo orçamento pode ficar pronto em 1 minuto.</h2>
   <button class="lp-btn" onclick="entrar()">Começar grátis agora</button>
+  <div style="margin-top:12px"><button class="lp-demo" style="color:#fff;border-color:rgba(255,255,255,.6)" onclick="entrarDemo()">▶ Ver demonstração sem cadastro</button></div>
   <p>Dúvidas? <a href="https://wa.me/5524992096103?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Foster%20Or%C3%A7a">Fale no WhatsApp</a> · (24) 99209-6103</p>
  </section>
  <footer class="lp-foot">Projetos · ART · Laudos · Vistorias técnicas · Gestão de obras — <a href="https://engfoster.com.br" target="_blank" style="color:#fff">Foster Engenharia</a><br>Foster Orça é um produto <b>Foster Tech Soluções</b> · Wilson Foster · comercial@fosterconstrucoes.com.br</footer>
@@ -540,7 +545,7 @@ let DB=load();let cur=null;
 function fixDB(d){if(!d||!d.perfil||!Array.isArray(d.serv))return null;SERV0.forEach((x,i)=>{if(!d.serv.find(y=>y.id===x.id))d.serv.splice(Math.min(i,d.serv.length),0,JSON.parse(JSON.stringify(x)))});d.mat=d.mat||{};for(const k in MAT0)if(!d.mat[k])d.mat[k]={...MAT0[k]};d.orcs=d.orcs||[];d.seq=d.seq||1;return d}
 function load(k){try{const d=JSON.parse(localStorage.getItem(k||KEY));if(d){SERV0.forEach((x,i)=>{if(!d.serv.find(y=>y.id===x.id))d.serv.splice(Math.min(i,d.serv.length),0,JSON.parse(JSON.stringify(x)))});for(const k in MAT0)if(!d.mat[k])d.mat[k]={...MAT0[k]};return d}}catch(e){}
  return{perfil:{nome:'',tel:'',doc:'',cidade:'',pd:2.8,profs:['pedreiro','pintor','eletricista','encanador']},serv:JSON.parse(JSON.stringify(SERV0)),mat:JSON.parse(JSON.stringify(MAT0)),orcs:[],seq:1}}
-function save(){DB._ts=Date.now();try{localStorage.setItem(LKEY,JSON.stringify(DB))}catch(e){}agendaSync()}
+function save(){if(DEMO)return;DB._ts=Date.now();try{localStorage.setItem(LKEY,JSON.stringify(DB))}catch(e){}agendaSync()}
 const $=id=>document.getElementById(id);
 const brl=v=>(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const nf=(v,d=2)=>(+v||0).toLocaleString('pt-BR',{maximumFractionDigits:d});
@@ -566,7 +571,7 @@ function setFiltro(f){filtro=f;renderLista()}
 function setStatus(id,v){const o=DB.orcs.find(x=>x.id===id);o.status=v;save();renderLista()}
 function enviarDe(id){cur=DB.orcs.find(o=>o.id===id);enviarAprovacao();setTimeout(renderLista,300)}
 async function pdfDe(id){cur=DB.orcs.find(o=>o.id===id);await gerarPDF()}
-function renderAviso(){const A=$('avisoPlano');if(!A)return;const c=CONTA;if(!c){A.innerHTML='';return}
+function renderAviso(){const A=$('avisoPlano');if(!A)return;if(DEMO){A.innerHTML=`<div class="aviso demo">👀 <div><b>Modo demonstração</b><br>Dados de exemplo: explore, monte orçamentos e veja o PDF. Nada fica salvo.<br><button onclick="sairDemo()">Criar minha conta grátis</button></div></div>`;return}const c=CONTA;if(!c){A.innerHTML='';return}
  if(c.plano==='teste'){const d=Math.max(0,Math.ceil((new Date(c.teste_ate)-Date.now())/864e5));A.innerHTML=`<div class="aviso ok" onclick="show('perfil')">🎁 <div><b>Teste grátis: tudo liberado</b><br>Faltam ${d} dia${d===1?'':'s'}. Use a IA por voz à vontade!</div></div>`}
  else if(c.plano==='gratis'){const u=c.usados_mes||0,l=c.limite_gratis;A.innerHTML=`<div class="aviso" onclick="show('perfil')">📊 <div><b>Plano grátis: ${u} de ${l} orçamentos este mês</b><br>Assine para ter orçamentos ilimitados e IA por voz.</div></div>`}else A.innerHTML=''}
 function renderLista(){renderAviso();const os=DB.orcs;const tot=o=>calc(o).total;const ym=new Date().toISOString().slice(0,7);
@@ -673,13 +678,13 @@ function renderCroqui(){const svg=croquiSVG(cur.comodos);$('croquiBox').innerHTM
 
 /* ================= VOZ ================= */
 let rec=null,recOn=false,mediaRec=null,chunks=[],recT=null,recStart=0,aCtx=null,raf=null,IA_ST='?';
-async function checaIA(){if(!iaOn()){IA_ST='off';return pintaIA()}
+async function checaIA(){if(DEMO){IA_ST='off';return pintaIA()}if(!iaOn()){IA_ST='off';return pintaIA()}
  try{const r=await fetch(IA_URL+'?acao=ping',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});const j=await r.json().catch(()=>({}));
   IA_ST=r.status===403?'origem':(j.ok&&j.chave?'ok':(j.ok?'semchave':'erro'))}catch(e){IA_ST='rede'}pintaIA()}
 function pintaIA(){const c=$('iaChip');if(!c)return;const m={ok:['ok','🟢 IA ativa'],off:['off','⚪ Modo offline'],origem:['off','⚪ Offline (abra pelo link)'],semchave:['err','🔴 IA sem chave'],erro:['err','🔴 IA com erro'],rede:['off','⚪ Sem internet'],'?':['off','⚪ verificando…']}[IA_ST];
  c.className='iachip '+m[0];c.textContent=m[1];
  if($('iaHint'))$('iaHint').textContent=IA_ST==='ok'?'IA ativa: pode falar do seu jeito, o app entende.':'Modo offline: fale cômodo, medidas e serviços. Ex.: “sala de 4 por 5, pintar parede”.'}
-const iaPronta=()=>IA_ST==='ok'&&pago();
+const iaPronta=()=>!DEMO&&IA_ST==='ok'&&pago();
 function tempo(){const s=Math.floor((Date.now()-recStart)/1000);$('recTime').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(iaPronta()&&s>=170){toast('Limite de 3 minutos');stopMic()}}
 function medidor(st){try{aCtx=new (window.AudioContext||window.webkitAudioContext)();const an=aCtx.createAnalyser();an.fftSize=512;aCtx.createMediaStreamSource(st).connect(an);const d=new Uint8Array(an.fftSize);
  const loop=()=>{an.getByteTimeDomainData(d);let m=0;for(const v of d)m=Math.max(m,Math.abs(v-128));$('recLvl').style.width=Math.min(100,m/60*100)+'%';raf=requestAnimationFrame(loop)};loop()}catch(e){}}
@@ -894,7 +899,8 @@ function importar(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{let d
 const SB_URL='https://fvsdlpnvqfvjdxmfgbjx.supabase.co',SB_KEY='sb_publishable_VT3XEbInyTr2Eu-AuLnrqw_BOrA2jYy';
 let sb=null,SESSAO=null,CONTA=null,PLANO_DEPOIS=null,syncT=null,authM='entrar';
 try{if(window.supabase)sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'fosterOrca_auth'}})}catch(e){}
-const pago=()=>!!CONTA&&CONTA.plano!=='gratis';
+let DEMO=false;
+const pago=()=>DEMO||(!!CONTA&&CONTA.plano!=='gratis');
 function verAuth(m){$('landing').classList.add('hide');$('appView').classList.add('hide');$('authView').classList.remove('hide');authModo(m||'entrar');window.scrollTo(0,0)}
 function setAuthMsg(t,c){$('authMsg').textContent=t||'';$('authMsg').className='auth-msg '+(c||'')}
 function authModo(m){authM=m;const b=$('authTabs').children;b[0].classList.toggle('on',m==='entrar');b[1].classList.toggle('on',m==='criar');
@@ -929,11 +935,11 @@ async function carregarConta(){if(!sb||!SESSAO)return;try{const {data,error}=awa
 function agendaSync(ja){if(!sb||!SESSAO)return;clearTimeout(syncT);syncT=setTimeout(async()=>{try{const {_conta,...d}=DB;await sb.from('orca_dados').upsert({user_id:SESSAO.user.id,dados:d,atualizado_em:new Date().toISOString()})}catch(e){}},ja?10:1500)}
 function abrirApp(){$('landing').classList.add('hide');$('authView').classList.add('hide');$('appView').classList.remove('hide');cur=null;show('lista');checaIA();
  if(PLANO_DEPOIS){const p=PLANO_DEPOIS;PLANO_DEPOIS=null;setTimeout(()=>pagarPix(p),300)}}
-async function sair(){if(!confirm('Sair da sua conta neste aparelho?'))return;clearTimeout(syncT);try{const {_conta,...d}=DB;await sb.from('orca_dados').upsert({user_id:SESSAO.user.id,dados:d,atualizado_em:new Date().toISOString()})}catch(e){}
+async function sair(){if(DEMO){sairDemo();return}if(!confirm('Sair da sua conta neste aparelho?'))return;clearTimeout(syncT);try{const {_conta,...d}=DB;await sb.from('orca_dados').upsert({user_id:SESSAO.user.id,dados:d,atualizado_em:new Date().toISOString()})}catch(e){}
  try{await sb.auth.signOut()}catch(e){}SESSAO=null;CONTA=null;LKEY=KEY;DB=load();cur=null;verAuth('entrar')}
 async function podeCriar(){if(!sb||!SESSAO)return true;try{const {data,error}=await sb.rpc('orca_novo_orcamento');if(error)return true;if(CONTA){CONTA.usados_mes=data.usados}
  if(!data.ok){paywall(`Você já usou os ${data.limite} orçamentos grátis deste mês.`);return false}return true}catch(e){return true}}
-function renderConta(){if(!SESSAO){$('contaEmail').textContent='';$('contaPlano').innerHTML='';return}$('contaEmail').textContent=SESSAO.user.email;const c=CONTA;
+function renderConta(){if(DEMO){$('contaEmail').textContent='Demonstração (sem conta)';$('contaPlano').innerHTML=`<div class="aviso demo">👀 <div><b>Você está na demonstração</b><br>Crie sua conta grátis para salvar seus orçamentos e ter 7 dias com tudo liberado, inclusive a IA por voz.<br><button onclick="sairDemo()">Criar conta grátis</button></div></div>`;return}if(!SESSAO){$('contaEmail').textContent='';$('contaPlano').innerHTML='';return}$('contaEmail').textContent=SESSAO.user.email;const c=CONTA;
  if(!c){$('contaPlano').innerHTML='<p class="hint">Carregando plano… (precisa de internet)</p>';return}
  const nomes={gratis:'Grátis',teste:'Teste grátis: tudo liberado',mensal:'Profissional mensal',anual:'Profissional anual'};const lim=c.limite_gratis,u=c.usados_mes||0;
  let h=`<div class="planbox ${pago()?'pago':''}"><small class="hint" style="margin:0">Seu plano</small><br><b>${nomes[c.plano]}</b>`;
@@ -1012,6 +1018,24 @@ function calcPerda(){const o=+$('lcObras').value||0,v=+$('lcValor').value||0,p=+
  $('lcCmp').innerHTML=m>0?`O plano anual custa <b>R$ 149</b>. ${m*12>=149?'O que você perde no ano pagaria <b>'+Math.floor(m*12/149)+' anos</b> de assinatura.':'Menos do que uma obra bem cobrada.'}`:''}
 function assinar(plano){const pl=/anual/i.test(plano)?'anual':'mensal';if(!SESSAO){PLANO_DEPOIS=pl;verAuth('criar');setAuthMsg('Crie sua conta (ou entre) para assinar o plano '+pl+'.','ok');return}abrirApp();pagarPix(pl)}
 
+/* ================= DEMONSTRAÇÃO (sem cadastro) ================= */
+const DEMO_ORCS=[
+ {cli:{nome:'Marcos Andrade',tel:'11966665555',end:'Rua do Porto, 15 — Centro'},st:'rasc',dias:0,fala:'Suíte de 4 por 4, pintar parede e teto, assentar piso, 4 tomadas e 2 pontos de luz. Banheiro de 2 por 2, azulejo na parede, ponto de água e chuveiro.'},
+ {cli:{nome:'Roberto Lima',tel:'11977776666',end:'Av. Brasil, 88 — Jardim Itaquá'},st:'env',dias:2,fala:'Cozinha de 3 por 3 e meio, quebrar o piso, assentar piso, azulejo na parede, 3 tomadas e ponto de água. Lavanderia de 2 por 2, assentar piso e pintar parede.'},
+ {cli:{nome:'Carla Mendes',tel:'11988887777',end:'Rua das Flores, 120 — Vila Nova'},st:'apr',dias:6,fala:'Quarto de 3 por 4, pintar parede e teto, assentar piso e 2 tomadas. Sala de 4 por 5 e meio, massa corrida e pintar parede, 2 pontos de luz. Banheiro de 2 por 1 e meio, quebrar o piso, azulejo na parede, ponto de água e instalar vaso.'},
+ {cli:{nome:'Condomínio Vila Verde',tel:'',end:'Rua Sete, 400 — bloco B'},st:'apr',dias:12,fala:'Corredor de 8 por 2, massa corrida e pintar parede e teto, 4 pontos de luz. Garagem de 6 por 5, pintar parede.'}
+];
+function entrarDemo(){
+ DEMO=true;SESSAO=null;CONTA=null;LKEY='__demo';cur=null;
+ DB=load('__vazio_demo');DB.perfil={...DB.perfil,nome:'João Reformas',tel:'11999990000',doc:'',cidade:'Santana de Parnaíba - SP'};
+ DEMO_ORCS.forEach((d,i)=>{const o={id:'demo'+i,num:DEMO_ORCS.length-i+40,data:new Date(Date.now()-d.dias*864e5).toISOString(),status:d.st,cliente:{...d.cli},fala:d.fala,comodos:[],itens:[],matModo:i===3?'incluso':'cliente',
+   extras:{ajudanteDias:0,ajudanteValor:150,almocoDias:0,almocoValor:30,cacambaQtd:0,cacambaValor:450,margem:10},prazo:'',validade:15,pagamento:'50% no início e 50% na entrega',obs:''};
+  const r=interpretarLocal(d.fala);o.comodos=r.comodos;o.itens=r.itens;cur=o;recalcAuto();cur=null;
+  const m2=o.itens.filter(x=>svc(x.sid)&&svc(x.sid).u==='m²').reduce((a,x)=>a+x.q,0);const ds=Math.max(1,Math.ceil(m2/25));o.extras.almocoDias=ds;o.prazo=ds;
+  if(o.itens.some(x=>x.sid==='demol_piso'))o.extras.cacambaQtd=1;DB.orcs.push(o)});
+ DB.seq=45;abrirApp();toast('Modo demonstração: explore à vontade')}
+function sairDemo(){DEMO=false;CONTA=null;LKEY=KEY;DB=load();cur=null;verAuth('criar')}
+
 /* ================= INÍCIO ================= */
 (async function iniciar(){
  if(location.hash.startsWith('#v=')){abrirCliente();return}
@@ -1019,6 +1043,7 @@ function assinar(plano){const pl=/anual/i.test(plano)?'anual':'mensal';if(!SESSA
  let sess=null;if(sb){try{const {data}=await sb.auth.getSession();sess=data.session}catch(e){}
   sb.auth.onAuthStateChange((ev,se)=>{if(ev==='PASSWORD_RECOVERY'){SESSAO=se;verAuth('nova')}else if(ev==='SIGNED_IN'&&se&&(!SESSAO||SESSAO.user.id!==se.user.id)){aoLogar(se).then(abrirApp)}else if(se)SESSAO=se})}
  if(/type=recovery/.test(location.hash))return;
+ if(location.hash==='#demo'){entrarDemo();return}
  if(location.hash==='#planos'){verLanding('lp-planos');if(sess)aoLogar(sess);return}
  if(sess){await aoLogar(sess);abrirApp();return}
  if(!sb){$('authView').classList.add('hide');$('landing').classList.add('hide');$('appView').classList.remove('hide');show('lista');checaIA();toast('Sem conexão: usando o modo offline');return}
