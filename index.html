@@ -934,7 +934,8 @@ async function carregarConta(){if(!sb||!SESSAO)return;try{const {data,error}=awa
  if(!CONTA){try{CONTA=JSON.parse(localStorage.getItem(LKEY+'_conta'))}catch(e){}}pintaIA();renderAviso();if(!$('tab-perfil').classList.contains('hide'))renderConta()}
 function agendaSync(ja){if(!sb||!SESSAO)return;clearTimeout(syncT);syncT=setTimeout(async()=>{try{const {_conta,...d}=DB;await sb.from('orca_dados').upsert({user_id:SESSAO.user.id,dados:d,atualizado_em:new Date().toISOString()})}catch(e){}},ja?10:1500)}
 function abrirApp(){$('landing').classList.add('hide');$('authView').classList.add('hide');$('appView').classList.remove('hide');cur=null;show('lista');checaIA();
- if(PLANO_DEPOIS){const p=PLANO_DEPOIS;PLANO_DEPOIS=null;setTimeout(()=>pagarPix(p),300)}}
+ if(PLANO_DEPOIS){const p=PLANO_DEPOIS;PLANO_DEPOIS=null;setTimeout(()=>pagarPix(p),300)}
+ setTimeout(importarDoCalc,350)}
 async function sair(){if(DEMO){sairDemo();return}if(!confirm('Sair da sua conta neste aparelho?'))return;clearTimeout(syncT);try{const {_conta,...d}=DB;await sb.from('orca_dados').upsert({user_id:SESSAO.user.id,dados:d,atualizado_em:new Date().toISOString()})}catch(e){}
  try{await sb.auth.signOut()}catch(e){}SESSAO=null;CONTA=null;LKEY=KEY;DB=load();cur=null;verAuth('entrar')}
 async function podeCriar(){if(!sb||!SESSAO)return true;try{const {data,error}=await sb.rpc('orca_novo_orcamento');if(error)return true;if(CONTA){CONTA.usados_mes=data.usados}
@@ -1036,8 +1037,41 @@ function entrarDemo(){
  DB.seq=45;abrirApp();toast('Modo demonstração: explore à vontade')}
 function sairDemo(){DEMO=false;CONTA=null;LKEY=KEY;DB=load();cur=null;verAuth('criar')}
 
+/* ================= IMPORTAR DO FOSTER CALC (Planta IA) ================= */
+// O Foster Calc manda os quantitativos da casa em #calc=<pacote>. Os serviços que já existem aqui entram com o seu preço;
+// os de obra nova (fundação, estrutura, telhado, esquadrias…) são criados na sua tabela, na profissão "Obra nova", com preço a preencher.
+async function importarDoCalc(){
+ let pac=null;try{pac=sessionStorage.getItem('fosterOrca_import')}catch(e){}if(!pac||DEMO)return;
+ try{sessionStorage.removeItem('fosterOrca_import')}catch(e){}
+ let d;try{d=await unpack(pac)}catch(e){toast('Não consegui ler os dados do Foster Calc');return}
+ if(!d||d.v!==1||!Array.isArray(d.it)){toast('Dados do Foster Calc inválidos');return}
+ if(!(await podeCriar()))return;
+ DB.perfil.profsExtra=DB.perfil.profsExtra||{};
+ if(!DB.perfil.profsExtra.obra)DB.perfil.profsExtra.obra='Obra nova';
+ if(!DB.perfil.profs.includes('obra'))DB.perfil.profs.push('obra');
+ let novos=0;const itens=[];
+ for(const x of d.it.slice(0,120)){
+  const q=Math.max(0,+x.q||0);if(!q)continue;
+  let s=x.sid&&svc(x.sid);
+  if(!s){const id='calc_'+String(x.k||x.n).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,48);
+   s=svc(id);if(!s){s={id,p:'obra',n:String(x.n).slice(0,90),u:String(x.u||'un').slice(0,6),base:'un',pr:0,mat:{}};DB.serv.push(s);novos++}}
+  itens.push({sid:s.id,com:'',q:Math.round(q*100)/100,pr:s.pr,auto:false});
+ }
+ const coms=(Array.isArray(d.com)?d.com:[]).slice(0,30).map(c=>({nome:String(c.nome||'Cômodo').slice(0,40),l:+c.l||3,c:+c.c||3,pd:+d.pd||DB.perfil.pd}));
+ cur={id:Date.now().toString(36),num:DB.seq++,data:new Date().toISOString(),status:'rasc',
+  cliente:{nome:String(d.cli?.nome||'').slice(0,80),tel:'',end:String(d.cli?.end||'').slice(0,120)},
+  fala:'Importado do Foster Calc · Planta IA'+(d.t?': '+String(d.t).slice(0,80):''),comodos:coms,itens,
+  matModo:'cliente',extras:{ajudanteDias:0,ajudanteValor:150,almocoDias:0,almocoValor:30,cacambaQtd:0,cacambaValor:450,margem:10},
+  prazo:'',validade:15,pagamento:'50% no início e 50% na entrega',obs:'Quantidades estimadas a partir do estudo preliminar do Foster Calc. Confira com os projetos.'};
+ DB.orcs.unshift(cur);save();show('editor');
+ toast(`Orçamento criado com ${itens.length} serviços do Foster Calc.`+(novos?` ${novos} são novos na sua tabela: preencha os preços.`:''));
+}
+
+window.addEventListener('hashchange',()=>{if(!location.hash.startsWith('#calc='))return;try{sessionStorage.setItem('fosterOrca_import',location.hash.slice(6))}catch(e){}history.replaceState(null,'',location.pathname+location.search);if(!$('appView').classList.contains('hide'))importarDoCalc()});
+
 /* ================= INÍCIO ================= */
 (async function iniciar(){
+ if(location.hash.startsWith('#calc=')){try{sessionStorage.setItem('fosterOrca_import',location.hash.slice(6))}catch(e){}history.replaceState(null,'',location.pathname+location.search)}
  if(location.hash.startsWith('#v=')){abrirCliente();return}
  let jaViu=false;try{jaViu=!!localStorage.getItem('fosterOrca_entrou')||!!DB.entrou}catch(e){}
  let sess=null;if(sb){try{const {data}=await sb.auth.getSession();sess=data.session}catch(e){}
@@ -1046,7 +1080,7 @@ function sairDemo(){DEMO=false;CONTA=null;LKEY=KEY;DB=load();cur=null;verAuth('c
  if(location.hash==='#demo'){entrarDemo();return}
  if(location.hash==='#planos'){verLanding('lp-planos');if(sess)aoLogar(sess);return}
  if(sess){await aoLogar(sess);abrirApp();return}
- if(!sb){$('authView').classList.add('hide');$('landing').classList.add('hide');$('appView').classList.remove('hide');show('lista');checaIA();toast('Sem conexão: usando o modo offline');return}
+ if(!sb){$('authView').classList.add('hide');$('landing').classList.add('hide');$('appView').classList.remove('hide');show('lista');checaIA();toast('Sem conexão: usando o modo offline');setTimeout(importarDoCalc,350);return}
  jaViu?verAuth('entrar'):verLanding('')})();
 </script>
 </body>
