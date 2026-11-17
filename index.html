@@ -402,6 +402,9 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0}
     <div><label>Validade (dias)</label><input type="number" id="cVal" oninput="upd('validade',this.value)"></div></div>
     <label>Pagamento</label><input id="cPag" oninput="upd('pagamento',this.value)">
     <label>Observações</label><textarea id="cObs" style="min-height:60px" oninput="upd('obs',this.value)"></textarea>
+    <details id="descBox" style="margin-top:10px"><summary style="cursor:pointer;font-weight:700">Memorial descritivo (vai no PDF)</summary>
+    <textarea id="cDesc" style="min-height:220px;font-size:13px" oninput="upd('desc',this.value)" placeholder="Descrição técnica da obra: fundação, estrutura, alvenaria, cobertura, acabamentos…"></textarea>
+    <div class="hint">Vem pronto quando o orçamento é gerado pelo Foster Calc. Apague o texto para tirar do PDF.</div></details>
   </div>
 
   <div class="card totbar" style="position:sticky;bottom:64px;z-index:10;border:2px solid var(--amber);padding:10px 12px">
@@ -606,7 +609,7 @@ function updN(p,v){setPath(cur,p,parseFloat(v)||0);save();refreshTot()}
 function renderEditor(){if(!cur)return;const o=cur;
  $('cNome').value=o.cliente.nome;$('cTel').value=o.cliente.tel;$('cEnd').value=o.cliente.end;$('fala').value=o.fala||'';
  const e=o.extras;$('xAjD').value=e.ajudanteDias;$('xAjV').value=e.ajudanteValor;$('xAlD').value=e.almocoDias;$('xAlV').value=e.almocoValor;$('xCaQ').value=e.cacambaQtd;$('xCaV').value=e.cacambaValor;$('xMg').value=e.margem;
- $('cPrazo').value=o.prazo;$('cVal').value=o.validade;$('cPag').value=o.pagamento;$('cObs').value=o.obs;
+ $('cPrazo').value=o.prazo;$('cVal').value=o.validade;$('cPag').value=o.pagamento;$('cObs').value=o.obs;$('cDesc').value=o.desc||'';$('descBox').open=!!o.desc;
  pintaIA();
  $('addServ').innerHTML=DB.serv.filter(s=>DB.perfil.profs.includes(s.p)).map(s=>`<option value="${s.id}">${profs()[s.p]||s.p} · ${esc(s.n)}</option>`).join('');
  renderComodos();renderItens();renderMats()}
@@ -796,6 +799,7 @@ function propostaHTML(o,p){const c=calc(o);const M=materiais(o);const inc=o.matM
  </table>
  ${M.length?`<h3>Materiais ${inc?'(inclusos no valor)':'(por conta do cliente)'}</h3><table><tr><th>Material</th><th style="text-align:right">Qtd</th><th>Un</th>${inc?'<th style="text-align:right">Total</th>':''}</tr>${M.map(m=>`<tr><td>${esc(m.n)}</td><td style="text-align:right">${nf(m.q)}</td><td>${m.u}</td>${inc?`<td style="text-align:right">${brl(m.t)}</td>`:''}</tr>`).join('')}</table>`:''}
  <div class="nobreak" style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px;background:#f3f4f6;border-left:5px solid var(--red);border-radius:8px"><div>${c.marg?`<div style="font-size:11px;color:#666">Inclui reserva técnica para imprevistos</div>`:''}<b>VALOR TOTAL</b></div><div class="big">${brl(c.total)}</div></div>
+ ${o.desc?`<h3>Memorial descritivo</h3><div style="white-space:pre-wrap;font-size:11.5px;line-height:1.45;text-align:justify">${esc(o.desc)}</div>`:''}
  <div class="fim"><h3>Condições</h3><div>Prazo estimado: <b>${o.prazo||'—'} dia(s) úteis</b><br>Pagamento: ${esc(o.pagamento||'—')}${o.obs?'<br>Obs.: '+esc(o.obs):''}<br><span style="color:#666;font-size:11px">Serviços não listados serão orçados à parte. Medidas sujeitas a conferência no local.</span></div>
  <div class="assin"><div>${esc(p.nome||'Profissional')}</div><div>${esc(o.cliente.nome||'Cliente')} — De acordo</div></div>
  ${o._pago||pago()?'':'<div style="text-align:center;font-size:11px;color:#d62828;margin-top:14px;border-top:1px dashed #ddd;padding-top:8px">Orçamento feito com <b>Foster Orça</b> · versão grátis · fosterfcs.github.io/foster-orca</div>'}</div></div>`}
@@ -1060,11 +1064,12 @@ async function importarDoCalc(){
  const coms=(Array.isArray(d.com)?d.com:[]).slice(0,30).map(c=>({nome:String(c.nome||'Cômodo').slice(0,40),l:+c.l||3,c:+c.c||3,pd:+d.pd||DB.perfil.pd}));
  cur={id:Date.now().toString(36),num:DB.seq++,data:new Date().toISOString(),status:'rasc',
   cliente:{nome:String(d.cli?.nome||'').slice(0,80),tel:'',end:String(d.cli?.end||'').slice(0,120)},
-  fala:'Importado do Foster Calc · Planta IA'+(d.t?': '+String(d.t).slice(0,80):''),comodos:coms,itens,
+  fala:'Importado do Foster Calc · Foster Projeto'+(d.t?': '+String(d.t).slice(0,80):''),comodos:coms,itens,
   matModo:'cliente',extras:{ajudanteDias:0,ajudanteValor:150,almocoDias:0,almocoValor:30,cacambaQtd:0,cacambaValor:450,margem:10},
-  prazo:'',validade:15,pagamento:'50% no início e 50% na entrega',obs:'Quantidades estimadas a partir do estudo preliminar do Foster Calc. Confira com os projetos.'};
+  prazo:'',validade:15,pagamento:'50% no início e 50% na entrega',obs:'Quantidades estimadas a partir do estudo preliminar do Foster Calc. Confira com os projetos.',
+  desc:typeof d.desc==='string'?d.desc.slice(0,15000):''};
  DB.orcs.unshift(cur);save();show('editor');
- toast(`Orçamento criado com ${itens.length} serviços do Foster Calc.`+(novos?` ${novos} são novos na sua tabela: preencha os preços.`:''));
+ toast(`Orçamento criado com ${itens.length} serviços do Foster Calc`+(cur.desc?' e o memorial descritivo':'')+'.'+(novos?` ${novos} são novos na sua tabela: preencha os preços.`:''));
 }
 
 window.addEventListener('hashchange',()=>{if(!location.hash.startsWith('#calc='))return;try{sessionStorage.setItem('fosterOrca_import',location.hash.slice(6))}catch(e){}history.replaceState(null,'',location.pathname+location.search);if(!$('appView').classList.contains('hide'))importarDoCalc()});
