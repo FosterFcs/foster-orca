@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foster Orça — fale o serviço, o app monta o orçamento</title>
+<meta name="description" content="Orçamento por voz com croqui, lista de materiais e PDF para enviar pelo WhatsApp. Veja em 1 minuto.">
+<meta name="theme-color" content="#1E2023">
+<meta property="og:type" content="video.other">
+<meta property="og:title" content="Foster Orça — fale o serviço, o app monta o orçamento">
+<meta property="og:description" content="Orçamento por voz com croqui, lista de materiais e PDF para enviar pelo WhatsApp. Veja em 1 minuto.">
+<meta property="og:image" content="https://fosterfcs.github.io/foster-orca/video/og-foster-orca.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://fosterfcs.github.io/foster-orca/video/">
+<meta property="og:video" content="https://fosterfcs.github.io/foster-orca/video/foster-orca.mp4">
+<meta property="og:video:type" content="video/mp4">
+<meta property="og:video:width" content="1080">
+<meta property="og:video:height" content="1920">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:#1E2023;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.hz{height:6px;width:100%;background:repeating-linear-gradient(135deg,#1E2023 0 14px,#E00000 14px 28px)}
+.wrap{width:100%;max-width:440px;padding:16px 16px 28px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.logo{font:700 26px Oswald;letter-spacing:.02em}
+.logo b{color:#E00000}
+video{width:100%;max-height:72vh;aspect-ratio:9/16;background:#F2F0EB;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.btn{display:block;width:100%;text-align:center;text-decoration:none;font:600 18px Oswald;letter-spacing:.04em;text-transform:uppercase;padding:15px;border-radius:10px}
+.red{background:#E00000;color:#fff}
+.ghost{border:2px solid rgba(255,255,255,.35);color:#fff}
+.aviso{width:100%;background:#FFD23F;color:#111;font:700 15px/1.35 Inter;padding:12px 14px;border-radius:10px}
+small{color:#9CA0A8;font-size:13px;text-align:center}
+footer{color:#9CA0A8;font-size:12px;display:flex;align-items:center;gap:6px;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="hz"></div>
+<div class="wrap">
+  <div class="logo">FOSTER <b>ORÇA</b></div>
+  <video controls playsinline preload="metadata" poster="capa-foster-orca.jpg">
+    <source src="foster-orca.mp4" type="video/mp4">
+  </video>
+  
+  <a class="btn red" href="../">Experimentar o Foster Orça</a>
+  
+  <small>Dúvidas? <a href="https://wa.me/5524992096103?text=Ol%C3%A1%21%20Vi%20o%20v%C3%ADdeo%20do%20Foster%20Or%C3%A7a%20e%20quero%20saber%20mais." style="color:#fff">Fale no WhatsApp</a></small>
+  <footer><svg viewBox="0 0 28 20" width="18" height="13" aria-label="Bandeira do Brasil"><rect width="28" height="20" rx="2" fill="#009C3B"/><path d="M14 2.5 25.5 10 14 17.5 2.5 10z" fill="#FFDF00"/><circle cx="14" cy="10" r="4.6" fill="#002776"/><path d="M9.6 9.2c3-.9 6.1-.5 8.8 1" stroke="#fff" stroke-width=".9" fill="none"/></svg>© <span id="ano">2026</span> Foster Tech Soluções</footer>
+</div>
+<script>document.getElementById('ano').textContent = new Date().getFullYear();</script>
+</body>
+</html>
